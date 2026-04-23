@@ -82,6 +82,7 @@
       <h2>새 라운드 만들기</h2>
       <div class="grid two">
         <div class="field"><label for="roundDate">날짜</label><input id="roundDate" type="date"></div>
+        <div class="field"><label for="courseName">코스</label><input id="courseName" type="text" placeholder="MGC"></div>
         <div class="field"><label for="weather">날씨 / 메모</label><input id="weather" type="text" placeholder="예: 비, 바람 강함"></div>
       </div>
       <div class="btn-row"><button class="btn primary" id="createRoundBtn">라운드 추가</button></div>
@@ -273,9 +274,11 @@
 
     $('createRoundBtn').addEventListener('click', () => {
       const date = $('roundDate').value;
+      const course = $('courseName').value.trim() || 'MGC';
       const weather = $('weather').value.trim();
-      state.rounds.push({ id: uid(), date, weather, holes: [] });
+      state.rounds.push({ id: uid(), date, course, weather, holes: [] });
       save(); render();
+      $('courseName').value = '';
       $('weather').value = '';
     });
 
