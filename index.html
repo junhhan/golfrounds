@@ -100,7 +100,6 @@
         <div class="field"><label for="roundSelect">라운드 선택</label><select id="roundSelect"></select></div>
         <div class="field"><label for="holeNumber">홀 번호</label><input id="holeNumber" type="number" min="1" max="18" placeholder="예: 1"></div>
         <div class="field"><label for="holePar">파</label><select id="holePar"><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option></select></div>
-        <div class="field"><label for="holeScore">스코어</label><input id="holeScore" type="number" min="1" placeholder="예: 6"></div>
       </div>
       <div class="btn-row"><button class="btn primary" id="addHoleBtn">홀 추가</button></div>
     </section>
@@ -113,7 +112,7 @@
         <div class="field"><label for="shotNumber">샷 번호</label><input id="shotNumber" type="number" min="1" placeholder="예: 2"></div>
         <div class="field"><label for="shotDist">남은 거리(m)</label><input id="shotDist" type="number" min="0" placeholder="예: 145"></div>
         <div class="field"><label for="shotClub">클럽</label><input id="shotClub" type="text" placeholder="예: 7i, PW, D"></div>
-        <div class="field"><label for="shotLocation">위치 코드</label><input id="shotLocation" type="text" placeholder="예: FW, R, G"></div>
+        <div class="field"><label for="shotLocation">위치</label><input id="shotLocation" type="text" placeholder="예: FW, R, G"></div>
       </div>
       <div class="field" style="margin-top: var(--space-3);"><label for="shotNote">노트</label><textarea id="shotNote" placeholder="예: T, 얇게 맞음 / 살짝 푸시"></textarea></div>
       <div class="btn-row">
@@ -125,8 +124,8 @@
     <details class="section" open>
       <summary>코드 예시 보기</summary>
       <div class="code-box">
-        위치: FW(페어웨이), R(러프), B(벙커), G(그린), L(왼쪽), Rg(오른쪽), Sh(짧음), Lg(김)<br>
-        노트: T(탑핑), F(팻), H(훅), S(슬라이스), U(업), D(다운)처럼 네 방식대로 바꿔 쓰면 돼요.
+        위치: FW(페어웨이), Rg(러프), B(벙커), G(그린), L(왼쪽), R(오른쪽), Sh(짧음), Lg(김)<br>
+        노트: T(탑핑), F(팻), H(훅), S(슬라이스), U(업), D(다운)
       </div>
     </details>
 
@@ -194,9 +193,37 @@
       round.holes.sort((a,b)=>a.number-b.number).forEach(hole => {
         const opt = document.createElement('option');
         opt.value = hole.id;
-        opt.textContent = `${hole.number}번홀 · Par ${hole.par}${hole.score ? ' · ' + hole.score + '타' : ''}`;
+        opt.textContent = `${hole.number}번홀 · Par ${hole.par}`;
         sel.appendChild(opt);
       });
+    }
+
+
+    let editing = null;
+
+    function editShot(roundId, holeId, shotId) {
+      const round = state.rounds.find(r => r.id === roundId);
+      const hole = round?.holes.find(h => h.id === holeId);
+      const shot = hole?.shots.find(s => s.id === shotId);
+      if (!shot) return;
+      $('shotRoundSelect').value = roundId;
+      refreshHoleSelect();
+      $('shotHoleSelect').value = holeId;
+      $('shotNumber').value = shot.number ?? '';
+      $('shotDist').value = shot.dist ?? '';
+      $('shotClub').value = shot.club ?? '';
+      $('shotLocation').value = shot.location ?? '';
+      $('shotNote').value = shot.note ?? '';
+      editing = { roundId, holeId, shotId };
+      $('addShotBtn').textContent = '샷 수정 저장';
+    }
+
+    function deleteShot(roundId, holeId, shotId) {
+      const round = state.rounds.find(r => r.id === roundId);
+      const hole = round?.holes.find(h => h.id === holeId);
+      if (!hole) return;
+      hole.shots = hole.shots.filter(s => s.id !== shotId);
+      save(); render();
     }
 
     function render() {
@@ -215,13 +242,17 @@
             <div class="hole-head">
               <div>
                 <div class="hole-title">${hole.number}번홀 · Par ${hole.par}</div>
-                <div class="muted">${hole.score ? '스코어 ' + hole.score + '타' : '스코어 미입력'}</div>
+                <div class="muted">라운드 중 기록용 홀 페이지</div>
               </div>
             </div>
             <div class="shots">
               ${hole.shots.length ? [...hole.shots].sort((a,b)=>a.number-b.number).map(shot => `
                 <div class="shot-card">
                   <div class="shot-head"><strong>${shot.number}번 샷</strong><span class="muted">${shot.club || '-'} · ${shot.dist !== '' ? shot.dist + 'm' : '거리 미입력'}</span></div>
+                  <div class="btn-row" style="margin-top: var(--space-3);">
+                    <button class="btn secondary" type="button" onclick="editShot('${round.id}','${hole.id}','${shot.id}')">수정</button>
+                    <button class="btn danger" type="button" onclick="deleteShot('${round.id}','${hole.id}','${shot.id}')">삭제</button>
+                  </div>
                   <div class="shot-grid">
                     <div><strong>클럽</strong><br>${shot.club || '-'}</div>
                     <div><strong>위치</strong><br>${shot.location || '-'}</div>
@@ -263,9 +294,9 @@
       const number = Number($('holeNumber').value);
       if (!number) return alert('홀 번호를 입력하세요.');
       if (round.holes.some(h => h.number === number)) return alert('이미 같은 홀 번호가 있어요.');
-      round.holes.push({ id: uid(), number, par: $('holePar').value, score: $('holeScore').value, shots: [] });
+      round.holes.push({ id: uid(), number, par: $('holePar').value, shots: [] });
       save(); render();
-      $('holeNumber').value = ''; $('holeScore').value = '';
+      $('holeNumber').value = '';
       $('shotRoundSelect').value = round.id;
       refreshHoleSelect();
     });
@@ -279,13 +310,21 @@
       if (!hole) return alert('홀을 선택하세요.');
       const number = Number($('shotNumber').value);
       if (!number) return alert('샷 번호를 입력하세요.');
-      hole.shots.push({
-        id: uid(), number,
+      const payload = {
+        number,
         dist: $('shotDist').value,
         club: $('shotClub').value.trim(),
         location: $('shotLocation').value.trim(),
         note: $('shotNote').value.trim()
-      });
+      };
+      if (editing && editing.roundId === round.id && editing.holeId === hole.id) {
+        const shot = hole.shots.find(s => s.id === editing.shotId);
+        if (shot) Object.assign(shot, payload);
+      } else {
+        hole.shots.push({ id: uid(), ...payload });
+      }
+      editing = null;
+      $('addShotBtn').textContent = '샷 추가';
       save(); render();
       $('shotNumber').value = ''; $('shotDist').value = ''; $('shotClub').value = ''; $('shotLocation').value = ''; $('shotNote').value = '';
       $('shotRoundSelect').value = round.id;
