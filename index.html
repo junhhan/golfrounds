@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Golf Round Tracker</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
+      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
+      --text-xl: clamp(1.5rem, 1.2rem + 1.25vw, 2rem);
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+      --radius-sm: 0.5rem; --radius-md: 0.75rem; --radius-lg: 1rem; --radius-xl: 1.25rem;
+      --color-bg: #f7f6f2; --color-surface: #fbfbf9; --color-surface-2: #f1eee8;
+      --color-border: #d8d4cc; --color-text: #26231d; --color-text-muted: #6f6d67;
+      --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-accent: #d19900;
+      --color-danger: #a13544; --shadow-sm: 0 1px 2px rgba(22,22,22,.06); --shadow-md: 0 10px 25px rgba(22,22,22,.08);
+      --font-body: 'Instrument Sans', system-ui, sans-serif; --font-display: 'Literata', Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100dvh; font-family: var(--font-body); background: linear-gradient(180deg,#f7f6f2 0%,#efede7 100%); color: var(--color-text); }
+    button, input, select, textarea { font: inherit; }
+    .app { max-width: 760px; margin: 0 auto; padding: var(--space-4); }
+    .hero { background: rgba(251,251,249,.88); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-6); box-shadow: var(--shadow-md); position: sticky; top: 0; backdrop-filter: blur(10px); z-index: 5; }
+    .hero h1 { margin: 0 0 var(--space-2); font-family: var(--font-display); font-size: var(--text-xl); }
+    .hero p { margin: 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .section { margin-top: var(--space-5); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: var(--space-5); box-shadow: var(--shadow-sm); }
+    .section h2 { margin: 0 0 var(--space-4); font-size: var(--text-lg); }
+    .grid { display: grid; gap: var(--space-3); }
+    .grid.two { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    .field { display: grid; gap: var(--space-2); }
+    .field label { font-size: var(--text-sm); color: var(--color-text-muted); font-weight: 600; }
+    .field input, .field select, .field textarea {
+      width: 100%; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: white;
+      padding: 0.85rem 0.9rem; min-height: 46px;
+    }
+    .field textarea { min-height: 82px; resize: vertical; }
+    .btn-row { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-4); }
+    .btn { border: 0; min-height: 46px; border-radius: 999px; padding: 0.8rem 1rem; font-weight: 700; }
+    .btn.primary { background: var(--color-primary); color: white; }
+    .btn.secondary { background: var(--color-surface-2); color: var(--color-text); border: 1px solid var(--color-border); }
+    .btn.danger { background: #f7e6e9; color: #7c2230; border: 1px solid #e4bcc3; }
+    .meta { display: flex; gap: var(--space-3); flex-wrap: wrap; margin-top: var(--space-3); }
+    .pill { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: 999px; padding: 0.45rem 0.8rem; font-size: var(--text-sm); color: var(--color-text-muted); }
+    .round-card, .hole-card, .shot-card { border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: white; padding: var(--space-4); }
+    .round-card { display: grid; gap: var(--space-4); }
+    .round-head, .hole-head, .shot-head { display: flex; justify-content: space-between; gap: var(--space-3); align-items: center; }
+    .round-title, .hole-title { font-weight: 800; }
+    .muted { color: var(--color-text-muted); font-size: var(--text-sm); }
+    .holes, .shots { display: grid; gap: var(--space-3); }
+    .shot-grid { display: grid; grid-template-columns: 0.8fr 1fr 1fr 1fr; gap: var(--space-2); margin-top: var(--space-3); }
+    .shot-grid div { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0.7rem; font-size: var(--text-sm); }
+    .empty { padding: var(--space-6); border: 1px dashed var(--color-border); border-radius: var(--radius-lg); text-align: center; color: var(--color-text-muted); background: rgba(255,255,255,.55); }
+    details { border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
+    summary { cursor: pointer; list-style: none; padding: var(--space-4); font-weight: 700; }
+    summary::-webkit-details-marker { display: none; }
+    .code-box { padding: 0 var(--space-4) var(--space-4); color: var(--color-text-muted); font-size: var(--text-sm); line-height: 1.6; }
+    .footer-note { margin-top: var(--space-5); text-align: center; color: var(--color-text-muted); font-size: var(--text-sm); }
+    @media (max-width: 640px) {
+      .grid.two, .shot-grid { grid-template-columns: 1fr; }
+      .app { padding: var(--space-3); }
+      .hero { padding: var(--space-5); }
+      .btn-row { display: grid; grid-template-columns: 1fr 1fr; }
+      .btn-row .btn:first-child { grid-column: 1 / -1; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="hero">
+      <h1>라운드별 골프 기록</h1>
+      <p>하루 라운드를 먼저 만들고, 그 아래에 홀을 추가한 뒤, 홀마다 샷 기록을 남기는 구조예요.</p>
+      <div class="meta">
+        <span class="pill">라운드 일자별 저장</span>
+        <span class="pill">홀별 정리</span>
+        <span class="pill">샷별 상세 기록</span>
+      </div>
+    </section>
+
+    <section class="section">
+      <h2>새 라운드 만들기</h2>
+      <div class="grid two">
+        <div class="field"><label for="roundDate">날짜</label><input id="roundDate" type="date"></div>
+        <div class="field"><label for="courseName">코스</label><input id="courseName" type="text" placeholder="예: MGC"></div>
+        <div class="field"><label for="teeName">티 박스</label><input id="teeName" type="text" placeholder="예: Blue"></div>
+        <div class="field"><label for="weather">날씨 / 메모</label><input id="weather" type="text" placeholder="예: 비, 바람 강함"></div>
+      </div>
+      <div class="btn-row"><button class="btn primary" id="createRoundBtn">라운드 추가</button></div>
+    </section>
+
+    <section class="section">
+      <h2>홀 기록 추가</h2>
+      <div class="grid two">
+        <div class="field"><label for="roundSelect">라운드 선택</label><select id="roundSelect"></select></div>
+        <div class="field"><label for="holeNumber">홀 번호</label><input id="holeNumber" type="number" min="1" max="18" placeholder="예: 1"></div>
+        <div class="field"><label for="holePar">파</label><select id="holePar"><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option></select></div>
+        <div class="field"><label for="holeScore">스코어</label><input id="holeScore" type="number" min="1" placeholder="예: 6"></div>
+      </div>
+      <div class="btn-row"><button class="btn primary" id="addHoleBtn">홀 추가</button></div>
+    </section>
+
+    <section class="section">
+      <h2>샷 기록 추가</h2>
+      <div class="grid two">
+        <div class="field"><label for="shotRoundSelect">라운드 선택</label><select id="shotRoundSelect"></select></div>
+        <div class="field"><label for="shotHoleSelect">홀 선택</label><select id="shotHoleSelect"></select></div>
+        <div class="field"><label for="shotNumber">샷 번호</label><input id="shotNumber" type="number" min="1" placeholder="예: 2"></div>
+        <div class="field"><label for="shotDist">남은 거리(m)</label><input id="shotDist" type="number" min="0" placeholder="예: 145"></div>
+        <div class="field"><label for="shotClub">클럽</label><input id="shotClub" type="text" placeholder="예: 7i, PW, D"></div>
+        <div class="field"><label for="shotLocation">위치 코드</label><input id="shotLocation" type="text" placeholder="예: FW, R, G"></div>
+      </div>
+      <div class="field" style="margin-top: var(--space-3);"><label for="shotNote">노트</label><textarea id="shotNote" placeholder="예: T, 얇게 맞음 / 살짝 푸시"></textarea></div>
+      <div class="btn-row">
+        <button class="btn primary" id="addShotBtn">샷 추가</button>
+        <button class="btn secondary" id="downloadBtn">JSON 백업 저장</button>
+      </div>
+    </section>
+
+    <details class="section" open>
+      <summary>코드 예시 보기</summary>
+      <div class="code-box">
+        위치: FW(페어웨이), R(러프), B(벙커), G(그린), L(왼쪽), Rg(오른쪽), Sh(짧음), Lg(김)<br>
+        노트: T(탑핑), F(팻), H(훅), S(슬라이스), U(업), D(다운)처럼 네 방식대로 바꿔 쓰면 돼요.
+      </div>
+    </details>
+
+    <section class="section">
+      <div class="hole-head">
+        <h2 style="margin:0;">저장된 기록</h2>
+        <button class="btn danger" id="resetBtn" type="button">전체 삭제</button>
+      </div>
+      <div id="roundsContainer" class="holes" style="margin-top: var(--space-4);"></div>
+    </section>
+
+    <p class="footer-note">이 파일은 브라우저에서 열어서 바로 쓸 수 있는 간단한 웹앱이에요.</p>
+  </main>
+
+  <script>
+    const state = { rounds: [] };
+    const $ = (id) => document.getElementById(id);
+
+    function uid() { return Math.random().toString(36).slice(2, 10); }
+    function save() { localStorage.setItem('golf-round-tracker-v1', JSON.stringify(state.rounds)); }
+    function load() {
+      try {
+        const raw = localStorage.getItem('golf-round-tracker-v1');
+        if (raw) state.rounds = JSON.parse(raw);
+      } catch (e) { state.rounds = []; }
+    }
+
+    function roundLabel(round) {
+      return `${round.date || '날짜 미정'} · ${round.course || '코스 미정'}${round.tee ? ' · ' + round.tee : ''}`;
+    }
+
+    function refreshRoundSelects() {
+      const selects = [$('roundSelect'), $('shotRoundSelect')];
+      selects.forEach(sel => {
+        sel.innerHTML = '';
+        if (!state.rounds.length) {
+          const opt = document.createElement('option');
+          opt.textContent = '먼저 라운드를 추가하세요';
+          opt.value = '';
+          sel.appendChild(opt);
+          return;
+        }
+        state.rounds.forEach(round => {
+          const opt = document.createElement('option');
+          opt.value = round.id;
+          opt.textContent = roundLabel(round);
+          sel.appendChild(opt);
+        });
+      });
+      refreshHoleSelect();
+    }
+
+    function refreshHoleSelect() {
+      const roundId = $('shotRoundSelect').value;
+      const round = state.rounds.find(r => r.id === roundId);
+      const sel = $('shotHoleSelect');
+      sel.innerHTML = '';
+      if (!round || !round.holes.length) {
+        const opt = document.createElement('option');
+        opt.textContent = '먼저 홀을 추가하세요';
+        opt.value = '';
+        sel.appendChild(opt);
+        return;
+      }
+      round.holes.sort((a,b)=>a.number-b.number).forEach(hole => {
+        const opt = document.createElement('option');
+        opt.value = hole.id;
+        opt.textContent = `${hole.number}번홀 · Par ${hole.par}${hole.score ? ' · ' + hole.score + '타' : ''}`;
+        sel.appendChild(opt);
+      });
+    }
+
+    function render() {
+      refreshRoundSelects();
+      const container = $('roundsContainer');
+      if (!state.rounds.length) {
+        container.innerHTML = '<div class="empty">아직 기록된 라운드가 없어요. 위에서 첫 라운드를 만들어 보세요.</div>';
+        return;
+      }
+      container.innerHTML = '';
+      [...state.rounds].sort((a,b)=> (b.date || '').localeCompare(a.date || '')).forEach(round => {
+        const card = document.createElement('article');
+        card.className = 'round-card';
+        const holesHtml = round.holes.length ? [...round.holes].sort((a,b)=>a.number-b.number).map(hole => `
+          <div class="hole-card">
+            <div class="hole-head">
+              <div>
+                <div class="hole-title">${hole.number}번홀 · Par ${hole.par}</div>
+                <div class="muted">${hole.score ? '스코어 ' + hole.score + '타' : '스코어 미입력'}</div>
+              </div>
+            </div>
+            <div class="shots">
+              ${hole.shots.length ? [...hole.shots].sort((a,b)=>a.number-b.number).map(shot => `
+                <div class="shot-card">
+                  <div class="shot-head"><strong>${shot.number}번 샷</strong><span class="muted">${shot.club || '-'} · ${shot.dist !== '' ? shot.dist + 'm' : '거리 미입력'}</span></div>
+                  <div class="shot-grid">
+                    <div><strong>클럽</strong><br>${shot.club || '-'}</div>
+                    <div><strong>위치</strong><br>${shot.location || '-'}</div>
+                    <div><strong>거리</strong><br>${shot.dist !== '' ? shot.dist + 'm' : '-'}</div>
+                    <div><strong>노트</strong><br>${shot.note || '-'}</div>
+                  </div>
+                </div>
+              `).join('') : '<div class="empty">이 홀에는 아직 샷 기록이 없어요.</div>'}
+            </div>
+          </div>
+        `).join('') : '<div class="empty">아직 홀 기록이 없어요.</div>';
+
+        card.innerHTML = `
+          <div class="round-head">
+            <div>
+              <div class="round-title">${round.date || '날짜 미정'} · ${round.course || '코스 미정'}</div>
+              <div class="muted">${round.tee ? '티: ' + round.tee + ' · ' : ''}${round.weather || '메모 없음'}</div>
+            </div>
+          </div>
+          <div class="holes">${holesHtml}</div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    $('createRoundBtn').addEventListener('click', () => {
+      const date = $('roundDate').value;
+      const course = $('courseName').value.trim();
+      const tee = $('teeName').value.trim();
+      const weather = $('weather').value.trim();
+      state.rounds.push({ id: uid(), date, course, tee, weather, holes: [] });
+      save(); render();
+      $('courseName').value = ''; $('teeName').value = ''; $('weather').value = '';
+    });
+
+    $('addHoleBtn').addEventListener('click', () => {
+      const round = state.rounds.find(r => r.id === $('roundSelect').value);
+      if (!round) return alert('먼저 라운드를 선택하세요.');
+      const number = Number($('holeNumber').value);
+      if (!number) return alert('홀 번호를 입력하세요.');
+      if (round.holes.some(h => h.number === number)) return alert('이미 같은 홀 번호가 있어요.');
+      round.holes.push({ id: uid(), number, par: $('holePar').value, score: $('holeScore').value, shots: [] });
+      save(); render();
+      $('holeNumber').value = ''; $('holeScore').value = '';
+      $('shotRoundSelect').value = round.id;
+      refreshHoleSelect();
+    });
+
+    $('shotRoundSelect').addEventListener('change', refreshHoleSelect);
+
+    $('addShotBtn').addEventListener('click', () => {
+      const round = state.rounds.find(r => r.id === $('shotRoundSelect').value);
+      if (!round) return alert('라운드를 선택하세요.');
+      const hole = round.holes.find(h => h.id === $('shotHoleSelect').value);
+      if (!hole) return alert('홀을 선택하세요.');
+      const number = Number($('shotNumber').value);
+      if (!number) return alert('샷 번호를 입력하세요.');
+      hole.shots.push({
+        id: uid(), number,
+        dist: $('shotDist').value,
+        club: $('shotClub').value.trim(),
+        location: $('shotLocation').value.trim(),
+        note: $('shotNote').value.trim()
+      });
+      save(); render();
+      $('shotNumber').value = ''; $('shotDist').value = ''; $('shotClub').value = ''; $('shotLocation').value = ''; $('shotNote').value = '';
+      $('shotRoundSelect').value = round.id;
+      refreshHoleSelect();
+      $('shotHoleSelect').value = hole.id;
+    });
+
+    $('downloadBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(state.rounds, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      const today = new Date().toISOString().slice(0,10);
+      a.href = URL.createObjectURL(blob);
+      a.download = `golf-round-log-${today}.json`;
+      a.click();
+      URL.revokeObjectURL(a.href);
+    });
+
+    $('resetBtn').addEventListener('click', () => {
+      if (!confirm('정말 모든 라운드 기록을 삭제할까요?')) return;
+      state.rounds = [];
+      save(); render();
+    });
+
+    load();
+    $('roundDate').value = new Date().toISOString().slice(0,10);
+    render();
+  </script>
+</body>
+</html>
