@@ -148,7 +148,7 @@
     }
 
     function roundLabel(round) {
-      return `${round.date || '날짜 미정'} · ${round.course || '코스 미정'}${round.tee ? ' · ' + round.tee : ''}`;
+      return `${round.date || '날짜 미정'} · ${round.course || 'MGC'}`;
     }
 
     function refreshRoundSelects() {
@@ -262,8 +262,8 @@
         card.innerHTML = `
           <div class="round-head">
             <div>
-              <div class="round-title">${round.date || '날짜 미정'} · ${round.course || '코스 미정'}</div>
-              <div class="muted">${round.tee ? '티: ' + round.tee + ' · ' : ''}${round.weather || '메모 없음'}</div>
+              <div class="round-title">${round.date || '날짜 미정'} · ${round.course || 'MGC'}</div>
+              <div class="muted">${round.weather || '메모 없음'}</div>
             </div>
           </div>
           <div class="holes">${holesHtml}</div>
