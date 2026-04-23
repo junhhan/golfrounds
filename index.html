@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Golf Round Tracker</title>
+  <title>Golf Round Tracker GPS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap" rel="stylesheet">
@@ -20,7 +20,8 @@
       --color-bg: #f7f6f2; --color-surface: #fbfbf9; --color-surface-2: #f1eee8;
       --color-border: #d8d4cc; --color-text: #26231d; --color-text-muted: #6f6d67;
       --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-accent: #d19900;
-      --color-danger: #a13544; --shadow-sm: 0 1px 2px rgba(22,22,22,.06); --shadow-md: 0 10px 25px rgba(22,22,22,.08);
+      --color-danger: #a13544; --color-success: #3e6b2a; --color-warning: #965b00;
+      --shadow-sm: 0 1px 2px rgba(22,22,22,.06); --shadow-md: 0 10px 25px rgba(22,22,22,.08);
       --font-body: 'Instrument Sans', system-ui, sans-serif; --font-display: 'Literata', Georgia, serif;
     }
     * { box-sizing: border-box; }
@@ -52,7 +53,7 @@
     .round-title, .hole-title { font-weight: 800; }
     .muted { color: var(--color-text-muted); font-size: var(--text-sm); }
     .holes, .shots { display: grid; gap: var(--space-3); }
-    .shot-grid { display: grid; grid-template-columns: 0.8fr 1fr 1fr 1fr; gap: var(--space-2); margin-top: var(--space-3); }
+    .shot-grid { display: grid; grid-template-columns: repeat(5, minmax(0,1fr)); gap: var(--space-2); margin-top: var(--space-3); }
     .shot-grid div { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 0.7rem; font-size: var(--text-sm); }
     .empty { padding: var(--space-6); border: 1px dashed var(--color-border); border-radius: var(--radius-lg); text-align: center; color: var(--color-text-muted); background: rgba(255,255,255,.55); }
     details { border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
@@ -60,6 +61,29 @@
     summary::-webkit-details-marker { display: none; }
     .code-box { padding: 0 var(--space-4) var(--space-4); color: var(--color-text-muted); font-size: var(--text-sm); line-height: 1.6; }
     .footer-note { margin-top: var(--space-5); text-align: center; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .status-box {
+      margin-top: var(--space-3);
+      padding: 0.85rem 0.9rem;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      background: var(--color-surface-2);
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+    }
+    .status-box.success { border-color: #cfdcc8; background: #eef5ea; color: #355824; }
+    .status-box.warning { border-color: #e3d3aa; background: #fbf4e2; color: #805000; }
+    .status-box.error { border-color: #e4bcc3; background: #fbeef0; color: #7c2230; }
+    .coords-preview {
+      margin-top: var(--space-3);
+      padding: var(--space-3);
+      border-radius: var(--radius-md);
+      background: white;
+      border: 1px solid var(--color-border);
+      font-size: var(--text-sm);
+      color: var(--color-text-muted);
+      line-height: 1.6;
+    }
+    .coords-preview strong { color: var(--color-text); }
     @media (max-width: 640px) {
       .grid.two, .shot-grid { grid-template-columns: 1fr; }
       .app { padding: var(--space-3); }
@@ -73,7 +97,7 @@
   <main class="app">
     <section class="hero">
       <h1>라운드별 골프 기록</h1>
-      <p>하루 라운드를 먼저 만들고, 그 아래에 홀을 추가한 뒤, 홀마다 샷 기록을 남기는 구조예요.</p>
+      <p>하루 라운드를 먼저 만들고, 그 아래에 홀을 추가한 뒤, 홀마다 샷 기록과 GPS 좌표를 남기는 구조예요.</p>
     </section>
 
     <section class="section">
@@ -109,8 +133,12 @@
       <div class="field" style="margin-top: var(--space-3);"><label for="shotNote">노트</label><textarea id="shotNote" placeholder="예: T, 얇게 맞음 / 살짝 푸시"></textarea></div>
       <div class="btn-row">
         <button class="btn primary" id="addShotBtn">샷 추가</button>
+        <button class="btn secondary" id="captureGpsBtn" type="button">현재 좌표 기록</button>
+        <button class="btn secondary" id="clearGpsBtn" type="button">좌표 지우기</button>
         <button class="btn secondary" id="downloadBtn">JSON 백업 저장</button>
       </div>
+      <div id="gpsStatus" class="status-box">아직 저장된 좌표가 없어요. 샷 위치에서 버튼을 눌러 위도/경도를 기록하세요.</div>
+      <div id="gpsPreview" class="coords-preview">현재 좌표: <strong>미기록</strong></div>
     </section>
 
     <details class="section" open>
@@ -129,25 +157,26 @@
       <div id="roundsContainer" class="holes" style="margin-top: var(--space-4);"></div>
     </section>
 
-    <p class="footer-note">이 파일은 브라우저에서 열어서 바로 쓸 수 있는 간단한 웹앱이에요.</p>
+    <p class="footer-note">GitHub Pages 같은 HTTPS 환경에서 열면 현재 위치 기록 기능을 사용할 수 있어요.</p>
   </main>
 
   <script>
     const state = { rounds: [] };
     const $ = (id) => document.getElementById(id);
     let editing = null;
+    let pendingCoords = null;
 
     function uid() {
       return Math.random().toString(36).slice(2, 10);
     }
 
     function save() {
-      localStorage.setItem('golf-round-tracker-v1', JSON.stringify(state.rounds));
+      localStorage.setItem('golf-round-tracker-v2', JSON.stringify(state.rounds));
     }
 
     function load() {
       try {
-        const raw = localStorage.getItem('golf-round-tracker-v1');
+        const raw = localStorage.getItem('golf-round-tracker-v2');
         if (raw) state.rounds = JSON.parse(raw);
       } catch (e) {
         state.rounds = [];
@@ -170,28 +199,41 @@
 
     function getNextShotNumber(hole) {
       if (!hole) return 1;
-      const existingNumbers = hole.shots
-        .map(s => Number(s.number))
-        .filter(n => !Number.isNaN(n));
+      const existingNumbers = hole.shots.map(s => Number(s.number)).filter(n => !Number.isNaN(n));
       return existingNumbers.length ? Math.max(...existingNumbers) + 1 : 1;
     }
 
     function suggestNextShotNumber() {
       const round = getSelectedRound();
       const hole = getSelectedHole();
-
       if (!hole) {
         $('shotNumber').value = '';
         $('shotNumber').placeholder = '예: 1';
         return;
       }
+      if (editing && editing.roundId === round?.id && editing.holeId === hole.id) return;
+      $('shotNumber').value = getNextShotNumber(hole);
+    }
 
-      if (editing && editing.roundId === round?.id && editing.holeId === hole.id) {
+    function setGpsStatus(message, tone = 'default') {
+      const box = $('gpsStatus');
+      box.textContent = message;
+      box.className = 'status-box' + (tone !== 'default' ? ` ${tone}` : '');
+    }
+
+    function renderGpsPreview() {
+      const preview = $('gpsPreview');
+      if (!pendingCoords) {
+        preview.innerHTML = '현재 좌표: <strong>미기록</strong>';
         return;
       }
+      preview.innerHTML = `현재 좌표: <strong>${pendingCoords.lat.toFixed(6)}, ${pendingCoords.lng.toFixed(6)}</strong>`;
+    }
 
-      const nextNumber = getNextShotNumber(hole);
-      $('shotNumber').value = nextNumber;
+    function clearPendingCoords(silent = false) {
+      pendingCoords = null;
+      renderGpsPreview();
+      if (!silent) setGpsStatus('좌표를 지웠어요. 새 샷 위치에서 다시 기록할 수 있어요.', 'warning');
     }
 
     function clearShotForm() {
@@ -201,6 +243,8 @@
       $('shotClub').value = '';
       $('shotLocation').value = '';
       $('shotNote').value = '';
+      clearPendingCoords(true);
+      setGpsStatus('아직 저장된 좌표가 없어요. 샷 위치에서 버튼을 눌러 위도/경도를 기록하세요.');
       suggestNextShotNumber();
     }
 
@@ -257,7 +301,7 @@
         return;
       }
 
-      round.holes
+      [...round.holes]
         .sort((a, b) => a.number - b.number)
         .forEach(hole => {
           const opt = document.createElement('option');
@@ -285,6 +329,9 @@
       $('shotClub').value = shot.club ?? '';
       $('shotLocation').value = shot.location ?? '';
       $('shotNote').value = shot.note ?? '';
+      pendingCoords = shot.coords ? { ...shot.coords } : null;
+      renderGpsPreview();
+      setGpsStatus(shot.coords ? '기존 샷의 저장된 좌표를 불러왔어요.' : '이 샷에는 저장된 좌표가 없어요.', shot.coords ? 'success' : 'warning');
       editing = { roundId, holeId, shotId };
       $('addShotBtn').textContent = '샷 수정 저장';
     }
@@ -348,6 +395,7 @@
                                   <div><strong>위치</strong><br>${shot.location || '-'}</div>
                                   <div><strong>거리</strong><br>${shot.dist !== '' ? shot.dist + 'm' : '-'}</div>
                                   <div><strong>노트</strong><br>${shot.note || '-'}</div>
+                                  <div><strong>좌표</strong><br>${shot.coords ? `${shot.coords.lat.toFixed(6)}, ${shot.coords.lng.toFixed(6)}` : '-'}</div>
                                 </div>
                               </div>
                             `).join('')
@@ -369,6 +417,39 @@
 
           container.appendChild(card);
         });
+    }
+
+    function captureCurrentLocation() {
+      if (!navigator.geolocation) {
+        setGpsStatus('이 브라우저에서는 위치 기능을 지원하지 않아요.', 'error');
+        return;
+      }
+
+      setGpsStatus('현재 위치를 가져오는 중이에요. 잠시만 기다려 주세요.', 'warning');
+
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          pendingCoords = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+          };
+          renderGpsPreview();
+          setGpsStatus('현재 위치를 기록했어요. 이제 샷을 저장하면 좌표도 함께 저장돼요.', 'success');
+        },
+        (error) => {
+          const messages = {
+            1: '위치 권한이 거부되었어요. 브라우저에서 위치 접근을 허용해 주세요.',
+            2: '현재 위치를 찾지 못했어요. 야외에서 다시 시도해 보세요.',
+            3: '위치 확인 시간이 초과됐어요. 잠시 후 다시 시도해 보세요.'
+          };
+          setGpsStatus(messages[error.code] || '위치 정보를 가져오지 못했어요.', 'error');
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        }
+      );
     }
 
     $('createRoundBtn').addEventListener('click', () => {
@@ -404,14 +485,21 @@
     $('shotRoundSelect').addEventListener('change', () => {
       editing = null;
       $('addShotBtn').textContent = '샷 추가';
+      clearPendingCoords(true);
+      setGpsStatus('라운드를 바꿨어요. 새 샷 위치에서 좌표를 다시 기록하세요.');
       refreshHoleSelect();
     });
 
     $('shotHoleSelect').addEventListener('change', () => {
       editing = null;
       $('addShotBtn').textContent = '샷 추가';
+      clearPendingCoords(true);
+      setGpsStatus('홀을 바꿨어요. 새 샷 위치에서 좌표를 다시 기록하세요.');
       suggestNextShotNumber();
     });
+
+    $('captureGpsBtn').addEventListener('click', captureCurrentLocation);
+    $('clearGpsBtn').addEventListener('click', () => clearPendingCoords());
 
     $('addShotBtn').addEventListener('click', () => {
       const round = state.rounds.find(r => r.id === $('shotRoundSelect').value);
@@ -436,7 +524,8 @@
         dist: $('shotDist').value,
         club: $('shotClub').value.trim(),
         location: $('shotLocation').value.trim(),
-        note: $('shotNote').value.trim()
+        note: $('shotNote').value.trim(),
+        coords: pendingCoords ? { ...pendingCoords } : null
       };
 
       if (editing && editing.roundId === round.id && editing.holeId === hole.id) {
@@ -476,6 +565,7 @@
     load();
     $('roundDate').value = new Date().toISOString().slice(0, 10);
     render();
+    renderGpsPreview();
     suggestNextShotNumber();
   </script>
 </body>
