@@ -273,12 +273,10 @@
 
     $('createRoundBtn').addEventListener('click', () => {
       const date = $('roundDate').value;
-      const course = $('courseName').value.trim();
-      const tee = $('teeName').value.trim();
       const weather = $('weather').value.trim();
-      state.rounds.push({ id: uid(), date, course, tee, weather, holes: [] });
+      state.rounds.push({ id: uid(), date, weather, holes: [] });
       save(); render();
-      $('courseName').value = ''; $('teeName').value = ''; $('weather').value = '';
+      $('weather').value = '';
     });
 
     $('addHoleBtn').addEventListener('click', () => {
