@@ -219,10 +219,6 @@
             <input id="shotDist" type="number" min="0" inputmode="numeric" placeholder="예: 145" />
           </div>
           <div class="field full option-group">
-            <label>미스샷</label>
-            <div id="missOptions" class="option-grid"></div>
-          </div>
-          <div class="field full option-group">
             <label>위치</label>
             <div id="locationOptions" class="option-grid"></div>
             <div class="helper-text">FW(페어웨이), H(홀), Rg(러프), B(벙커), G(그린), L(왼쪽), R(오른쪽), Sh(짧음), Lg(김)</div>
@@ -232,9 +228,13 @@
             <div id="noteOptions" class="option-grid"></div>
             <div class="helper-text">T(탑핑), F(팻), H(훅), S(슬라이스), U(업), D(다운)</div>
           </div>
+          <div class="field full option-group">
+            <label>미스샷</label>
+            <div id="missOptions" class="option-grid three"></div>
+            <div class="helper-text">Yes(미스샷), No(정상 샷)</div>
+          </div>
         </div>
         <div class="btn-row">
-          <button class="btn primary" id="saveShotBtn" type="button">샷 추가</button>
           <button class="btn ghost hidden" id="cancelEditBtn" type="button">수정 취소</button>
         </div>
         <div class="inline-message" id="shotMessage"></div>
@@ -251,7 +251,7 @@
 
   <script>
     const CLUB_OPTIONS = ['D', '3W', '5W', '4H', '5H', '5i', '6i', '7i', '8i', '9i', 'PW', 'AW', 'SW', 'PT'];
-    const MISS_OPTIONS = ['MISS'];
+    const MISS_OPTIONS = ['Yes', 'No'];
     const LOCATION_OPTIONS = ['FW', 'H', 'Rg', 'B', 'G', 'L', 'R', 'Sh', 'Lg'];
     const NOTE_OPTIONS = ['T', 'F', 'H', 'S', 'U', 'D'];
 
@@ -365,7 +365,8 @@
       if (!hole || state.currentScreen !== 'hole' || state.editingShotId) return;
       const club = state.draft.club;
       const hasLocation = Array.isArray(state.draft.location) && state.draft.location.length > 0;
-      if (!club || !hasLocation) return;
+      const hasMiss = !!state.draft.miss;
+      if (!club || !hasLocation || !hasMiss) return;
       const number = Number($('shotNumber').value) || getNextShotNumber(hole);
       const ok = confirm('샷을 추가하시겠습니까?');
       if (!ok) return;
@@ -395,7 +396,6 @@
     function clearShotForm() {
       state.editingShotId = null;
       state.draft = { club: '', miss: '', location: [], note: [] };
-      $('saveShotBtn').textContent = '샷 추가';
       $('cancelEditBtn').classList.add('hidden');
       $('shotDist').value = '';
       clearMessage('shotMessage');
@@ -511,7 +511,6 @@
           state.draft.miss = shot.miss || '';
           state.draft.location = Array.isArray(shot.location) ? [...shot.location] : (shot.location ? [shot.location] : []);
           state.draft.note = Array.isArray(shot.note) ? [...shot.note] : (shot.note ? [shot.note] : []);
-          $('saveShotBtn').textContent = '샷 수정 저장';
           $('cancelEditBtn').classList.remove('hidden');
           $('shotNumber').value = shot.number || '';
           $('shotDist').value = shot.dist || '';
@@ -557,6 +556,8 @@
       let number = Number($('shotNumber').value);
       if (!number) number = state.editingShotId ? Number($('shotNumber').value || 1) : getNextShotNumber(hole);
       if (!club) return showMessage('shotMessage', '클럽을 선택해 주세요.', 'error');
+      if (!location.length) return showMessage('shotMessage', '위치를 하나 이상 선택해 주세요.', 'error');
+      if (!miss) return showMessage('shotMessage', '미스샷 여부를 선택해 주세요.', 'error');
       hole.par = $('holePar').value;
       const payload = { number, club, dist, miss, location, note };
       if (state.editingShotId) {
@@ -575,7 +576,6 @@
 
     $('createRoundBtn').addEventListener('click', createRound);
     $('backToRoundsBtn').addEventListener('click', () => showScreen('rounds'));
-    $('saveShotBtn').addEventListener('click', saveShot);
     $('cancelEditBtn').addEventListener('click', clearShotForm);
     $('prevHoleBtn').addEventListener('click', () => {
       if (state.currentHoleIndex === 0) return;
