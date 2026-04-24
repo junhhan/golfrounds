@@ -326,6 +326,12 @@
       return nums.length ? Math.max(...nums) + 1 : 1;
     }
 
+    function buzz(ms = 12) {
+      if (typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate(ms);
+      }
+    }
+
     function setDraft(key, value) {
       if (key === 'location' || key === 'note') {
         const list = Array.isArray(state.draft[key]) ? [...state.draft[key]] : [];
@@ -336,6 +342,7 @@
       } else {
         state.draft[key] = state.draft[key] === value ? '' : value;
       }
+      buzz();
       renderSelections();
       maybePromptAutoAdd();
     }
@@ -366,9 +373,8 @@
       const hole = getCurrentHole();
       if (!hole || state.currentScreen !== 'hole' || state.editingShotId) return;
       const club = state.draft.club;
-      const hasLocation = Array.isArray(state.draft.location) && state.draft.location.length > 0;
       const hasMiss = !!state.draft.miss;
-      if (!club || !hasLocation || !hasMiss) return;
+      if (!club || !hasMiss) return;
       const number = Number($('shotNumber').value) || getNextShotNumber(hole);
       const ok = confirm('샷을 추가하시겠습니까?');
       if (!ok) return;
@@ -558,7 +564,6 @@
       let number = Number($('shotNumber').value);
       if (!number) number = state.editingShotId ? Number($('shotNumber').value || 1) : getNextShotNumber(hole);
       if (!club) return showMessage('shotMessage', '클럽을 선택해 주세요.', 'error');
-      if (!location.length) return showMessage('shotMessage', '위치를 하나 이상 선택해 주세요.', 'error');
       if (!miss) return showMessage('shotMessage', '미스샷 여부를 선택해 주세요.', 'error');
       hole.par = $('holePar').value;
       const payload = { number, club, dist, miss, location, note };
