@@ -14,350 +14,99 @@
       --text-base: clamp(1rem, 0.96rem + 0.25vw, 1.125rem);
       --text-lg: clamp(1.125rem, 1.04rem + 0.42vw, 1.35rem);
       --text-xl: clamp(1.55rem, 1.25rem + 1vw, 2.1rem);
-      --space-1: 0.25rem;
-      --space-2: 0.5rem;
-      --space-3: 0.75rem;
-      --space-4: 1rem;
-      --space-5: 1.25rem;
-      --space-6: 1.5rem;
-      --space-8: 2rem;
-      --space-10: 2.5rem;
-      --radius-sm: 0.5rem;
-      --radius-md: 0.8rem;
-      --radius-lg: 1rem;
-      --radius-xl: 1.25rem;
-      --color-bg: #f7f6f2;
-      --color-surface: #fbfbf9;
-      --color-surface-2: #f2efe9;
-      --color-border: #d8d4cc;
-      --color-text: #26231d;
-      --color-text-muted: #6f6d67;
-      --color-primary: #01696f;
-      --color-primary-hover: #0c4e54;
-      --color-primary-soft: #dcebea;
-      --color-danger: #a13544;
-      --color-danger-soft: #f8e7ea;
-      --color-warning: #d19900;
-      --shadow-sm: 0 1px 2px rgba(22, 22, 22, 0.06);
-      --shadow-md: 0 10px 28px rgba(22, 22, 22, 0.08);
-      --font-body: 'Instrument Sans', system-ui, sans-serif;
-      --font-display: 'Literata', Georgia, serif;
+      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+      --radius-sm: 0.5rem; --radius-md: 0.8rem; --radius-lg: 1rem; --radius-xl: 1.25rem;
+      --color-bg: #f7f6f2; --color-surface: #fbfbf9; --color-surface-2: #f2efe9;
+      --color-border: #d8d4cc; --color-text: #26231d; --color-text-muted: #6f6d67;
+      --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-soft: #dcebea;
+      --color-danger: #a13544; --color-danger-soft: #f8e7ea;
+      --shadow-sm: 0 1px 2px rgba(22,22,22,.06); --shadow-md: 0 10px 28px rgba(22,22,22,.08);
+      --font-body: 'Instrument Sans', system-ui, sans-serif; --font-display: 'Literata', Georgia, serif;
       --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
     * { box-sizing: border-box; }
     html { -webkit-text-size-adjust: 100%; }
-    body {
-      margin: 0;
-      min-height: 100dvh;
-      font-family: var(--font-body);
-      color: var(--color-text);
-      background: linear-gradient(180deg, #f7f6f2 0%, #efece5 100%);
-    }
+    body { margin: 0; min-height: 100dvh; font-family: var(--font-body); color: var(--color-text); background: linear-gradient(180deg,#f7f6f2 0%,#efece5 100%); }
     button, input, textarea, select { font: inherit; }
     button { cursor: pointer; }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      white-space: nowrap;
-      border: 0;
+    .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
+    .app { max-width: 820px; margin: 0 auto; padding: var(--space-4); padding-bottom: calc(var(--space-10) + env(safe-area-inset-bottom)); }
+    .hidden { display:none !important; }
+    .screen { display:grid; gap: var(--space-5); }
+    .card, .shot-item, .inline-message { background: rgba(251,251,249,.94); border:1px solid var(--color-border); box-shadow: var(--shadow-sm); }
+    .card { border-radius: var(--radius-xl); padding: var(--space-5); }
+    .hero { display:grid; gap: var(--space-4); }
+    .brand { display:inline-flex; align-items:center; gap: var(--space-3); }
+    .brand-mark { width:42px; height:42px; border-radius:999px; background: var(--color-primary-soft); display:grid; place-items:center; color: var(--color-primary); flex-shrink:0; }
+    .brand-copy h1 { margin:0; font-family: var(--font-display); font-size: var(--text-xl); }
+    .brand-copy p { margin: var(--space-1) 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .section-head { display:flex; justify-content:space-between; gap:var(--space-3); align-items:flex-start; }
+    .section-head h2, .section-head h3 { margin:0; font-size: var(--text-lg); }
+    .section-head p { margin: var(--space-1) 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .field-grid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--space-3); }
+    .field { display:grid; gap: var(--space-2); }
+    .field.full { grid-column: 1 / -1; }
+    .field label { font-size: var(--text-sm); font-weight:600; color: var(--color-text-muted); }
+    .field input, .field select, .field textarea {
+      width:100%; min-height:48px; border-radius: var(--radius-md); border:1px solid var(--color-border);
+      background:white; padding: .85rem .95rem; color: var(--color-text);
     }
-    .app {
-      max-width: 820px;
-      margin: 0 auto;
-      padding: var(--space-4);
-      padding-bottom: calc(var(--space-10) + env(safe-area-inset-bottom));
-    }
-    .hero, .panel, .round-card, .shot-item, .inline-message {
-      background: rgba(251, 251, 249, 0.92);
-      border: 1px solid var(--color-border);
-      box-shadow: var(--shadow-sm);
-    }
-    .hero {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      border-radius: var(--radius-xl);
-      padding: var(--space-5);
-      box-shadow: var(--shadow-md);
-      backdrop-filter: blur(12px);
-      display: grid;
-      gap: var(--space-4);
-      margin-bottom: var(--space-5);
-    }
-    .hero-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: var(--space-4);
-    }
-    .brand {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--space-3);
-    }
-    .brand-mark {
-      width: 42px;
-      height: 42px;
-      border-radius: 999px;
-      background: var(--color-primary-soft);
-      display: grid;
-      place-items: center;
-      color: var(--color-primary);
-      flex-shrink: 0;
-    }
-    .brand-copy h1 {
-      margin: 0;
-      font-family: var(--font-display);
-      font-size: var(--text-xl);
-    }
-    .brand-copy p {
-      margin: var(--space-1) 0 0;
-      color: var(--color-text-muted);
-      font-size: var(--text-sm);
-    }
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-      justify-content: flex-end;
-    }
+    .field textarea { min-height:96px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus { outline:2px solid color-mix(in srgb, var(--color-primary) 28%, white); outline-offset:2px; border-color: var(--color-primary); }
+    .btn-row { display:flex; gap: var(--space-3); flex-wrap:wrap; margin-top: var(--space-4); }
     .btn {
-      min-height: 46px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      padding: 0.82rem 1.05rem;
-      font-size: var(--text-sm);
-      font-weight: 700;
+      min-height:46px; border-radius:999px; border:1px solid transparent; padding:.82rem 1.05rem; font-size: var(--text-sm);
+      font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:var(--space-2);
       transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: var(--space-2);
     }
     .btn:active { transform: translateY(1px); }
-    .btn.primary { background: var(--color-primary); color: #fff; }
+    .btn.primary { background: var(--color-primary); color:#fff; }
     .btn.primary:hover { background: var(--color-primary-hover); }
     .btn.secondary { background: var(--color-surface-2); color: var(--color-text); border-color: var(--color-border); }
-    .btn.danger { background: var(--color-danger-soft); color: #7c2230; border-color: #e5bcc5; }
+    .btn.danger { background: var(--color-danger-soft); color:#7c2230; border-color:#e5bcc5; }
     .btn.ghost { background: transparent; border-color: var(--color-border); color: var(--color-text-muted); }
-    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-    .hero-summary {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: var(--space-3);
-    }
-    .summary-chip {
-      border-radius: var(--radius-lg);
-      background: white;
-      border: 1px solid var(--color-border);
-      padding: var(--space-3) var(--space-4);
-    }
-    .summary-chip span {
-      display: block;
-      color: var(--color-text-muted);
-      font-size: var(--text-xs);
-      margin-bottom: var(--space-1);
-    }
-    .summary-chip strong {
-      display: block;
-      font-size: var(--text-lg);
-      font-variant-numeric: tabular-nums;
-    }
-    .panel {
-      border-radius: var(--radius-xl);
-      padding: var(--space-5);
-      margin-bottom: var(--space-5);
-    }
-    .panel h2 {
-      margin: 0 0 var(--space-4);
-      font-size: var(--text-lg);
-    }
-    .field-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: var(--space-3);
-    }
-    .field { display: grid; gap: var(--space-2); }
-    .field.full { grid-column: 1 / -1; }
-    .field label {
-      font-size: var(--text-sm);
-      font-weight: 600;
-      color: var(--color-text-muted);
-    }
-    .field input, .field select, .field textarea {
-      width: 100%;
-      min-height: 48px;
-      border-radius: var(--radius-md);
-      border: 1px solid var(--color-border);
-      background: white;
-      padding: 0.85rem 0.95rem;
-      color: var(--color-text);
-    }
-    .field textarea { min-height: 96px; resize: vertical; }
-    .field input:focus, .field select:focus, .field textarea:focus {
-      outline: 2px solid color-mix(in srgb, var(--color-primary) 28%, white);
-      outline-offset: 2px;
-      border-color: var(--color-primary);
-    }
-    .actions {
-      display: flex;
-      gap: var(--space-3);
-      flex-wrap: wrap;
-      margin-top: var(--space-4);
-    }
-    .inline-message {
-      border-radius: var(--radius-lg);
-      padding: var(--space-3) var(--space-4);
-      color: var(--color-text-muted);
-      font-size: var(--text-sm);
-      margin-top: var(--space-4);
-      display: none;
-    }
-    .inline-message.show { display: block; }
-    .inline-message.error {
-      background: #fff2f4;
-      color: #7c2230;
-      border-color: #ebc3ca;
-    }
-    .inline-message.success {
-      background: #eef7f6;
-      color: var(--color-primary-hover);
-      border-color: #cfe1df;
-    }
-    .hidden { display: none !important; }
-    .round-card {
-      border-radius: var(--radius-xl);
-      padding: var(--space-5);
-      margin-bottom: var(--space-5);
-      display: grid;
-      gap: var(--space-4);
-    }
-    .round-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: var(--space-4);
-    }
-    .round-head h3 { margin: 0; font-size: var(--text-lg); }
-    .round-head p {
-      margin: var(--space-1) 0 0;
-      color: var(--color-text-muted);
-      font-size: var(--text-sm);
-    }
-    .round-meta {
-      display: flex;
-      flex-wrap: wrap;
-      gap: var(--space-2);
-    }
-    .tag {
-      border-radius: 999px;
-      background: var(--color-surface-2);
-      border: 1px solid var(--color-border);
-      color: var(--color-text-muted);
-      padding: 0.45rem 0.7rem;
-      font-size: var(--text-xs);
-      font-weight: 700;
-    }
-    .hole-screen { display: grid; gap: var(--space-4); }
-    .hole-header { display: grid; gap: var(--space-3); text-align: center; }
-    .hole-title {
-      font-size: var(--text-xl);
-      font-family: var(--font-display);
-      margin: 0;
-    }
-    .hole-nav-dots {
-      display: flex;
-      gap: var(--space-2);
-      overflow-x: auto;
-      padding-bottom: var(--space-1);
-      justify-content: center;
-      scrollbar-width: none;
-    }
-    .hole-nav-dots::-webkit-scrollbar { display: none; }
+    .btn:disabled { opacity:.45; cursor:not-allowed; }
+    .round-list, .shot-list { display:grid; gap: var(--space-3); }
+    .round-item { border:1px solid var(--color-border); border-radius: var(--radius-lg); background:white; padding: var(--space-4); display:grid; gap: var(--space-3); }
+    .round-meta { display:flex; flex-wrap:wrap; gap: var(--space-2); }
+    .tag { border-radius:999px; background: var(--color-surface-2); border:1px solid var(--color-border); color: var(--color-text-muted); padding:.45rem .7rem; font-size: var(--text-xs); font-weight:700; }
+    .inline-message { border-radius: var(--radius-lg); padding: var(--space-3) var(--space-4); color: var(--color-text-muted); font-size: var(--text-sm); display:none; }
+    .inline-message.show { display:block; }
+    .inline-message.error { background:#fff2f4; color:#7c2230; border-color:#ebc3ca; }
+    .inline-message.success { background:#eef7f6; color: var(--color-primary-hover); border-color:#cfe1df; }
+    .empty { border-radius: var(--radius-lg); border:1px dashed var(--color-border); background: rgba(255,255,255,.58); padding: var(--space-6); text-align:center; color: var(--color-text-muted); }
+    .hole-topbar { display:flex; justify-content:space-between; gap: var(--space-3); align-items:center; }
+    .hole-title { margin:0; font-size: var(--text-xl); font-family: var(--font-display); text-align:center; }
+    .hole-nav-dots { display:flex; gap: var(--space-2); overflow-x:auto; padding-bottom: var(--space-1); justify-content:center; scrollbar-width:none; }
+    .hole-nav-dots::-webkit-scrollbar { display:none; }
     .hole-dot {
-      min-width: 42px;
-      min-height: 42px;
-      border-radius: 999px;
-      border: 1px solid var(--color-border);
-      background: white;
-      color: var(--color-text-muted);
-      font-size: var(--text-sm);
-      font-weight: 700;
+      min-width:42px; min-height:42px; border-radius:999px; border:1px solid var(--color-border); background:white;
+      color: var(--color-text-muted); font-size: var(--text-sm); font-weight:700;
     }
-    .hole-dot.active {
-      background: var(--color-primary);
-      border-color: var(--color-primary);
-      color: white;
-    }
-    .hole-pager {
-      display: flex;
-      justify-content: center;
-      gap: var(--space-3);
-      flex-wrap: wrap;
-    }
-    .current-hole-panel {
-      border-radius: var(--radius-xl);
-      border: 1px solid var(--color-border);
-      background: rgba(255,255,255,0.75);
-      padding: var(--space-5);
-      display: grid;
-      gap: var(--space-4);
-    }
-    .current-hole-panel h3 { margin: 0; font-size: var(--text-lg); }
-    .shot-list { display: grid; gap: var(--space-3); }
-    .shot-item {
-      border-radius: var(--radius-lg);
-      padding: var(--space-4);
-      display: grid;
-      gap: var(--space-3);
-    }
-    .shot-item-top {
-      display: flex;
-      justify-content: space-between;
-      gap: var(--space-3);
-      align-items: flex-start;
-    }
+    .hole-dot.active { background: var(--color-primary); border-color: var(--color-primary); color:white; }
+    .hole-pager { display:flex; justify-content:center; gap: var(--space-3); flex-wrap:wrap; }
+    .shot-item { border-radius: var(--radius-lg); padding: var(--space-4); display:grid; gap: var(--space-3); }
+    .shot-item-top { display:flex; justify-content:space-between; gap: var(--space-3); align-items:flex-start; }
     .shot-item strong { font-size: var(--text-base); }
-    .shot-item p {
-      margin: var(--space-1) 0 0;
-      color: var(--color-text-muted);
-      font-size: var(--text-sm);
-    }
-    .shot-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
-    .empty {
-      border-radius: var(--radius-lg);
-      border: 1px dashed var(--color-border);
-      background: rgba(255,255,255,0.58);
-      padding: var(--space-6);
-      text-align: center;
-      color: var(--color-text-muted);
-    }
-    .footer-note {
-      text-align: center;
-      color: var(--color-text-muted);
-      font-size: var(--text-sm);
-      margin-top: var(--space-4);
-    }
+    .shot-item p { margin: var(--space-1) 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
+    .shot-actions { display:flex; gap: var(--space-2); flex-wrap:wrap; }
+    .footer-note { text-align:center; color: var(--color-text-muted); font-size: var(--text-sm); margin-top: var(--space-2); }
     @media (max-width: 720px) {
       .app { padding: var(--space-3); }
-      .hero, .panel, .round-card, .current-hole-panel { padding: var(--space-4); }
-      .hero-summary, .field-grid { grid-template-columns: 1fr; }
-      .hero-top, .round-head { flex-direction: column; }
-      .hero-actions, .actions, .shot-actions, .hole-pager { display: grid; grid-template-columns: 1fr 1fr; }
-      .hero-actions .btn:first-child, .actions .btn:first-child, .hole-pager .btn:first-child { grid-column: 1 / -1; }
-      .hole-dot { min-width: 38px; min-height: 38px; }
+      .card { padding: var(--space-4); }
+      .field-grid { grid-template-columns: 1fr; }
+      .section-head, .hole-topbar { flex-direction:column; align-items:stretch; }
+      .btn-row, .shot-actions, .hole-pager { display:grid; grid-template-columns:1fr 1fr; }
+      .btn-row .btn:first-child, .hole-pager .btn:first-child { grid-column:1 / -1; }
+      .hole-dot { min-width:38px; min-height:38px; }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <section class="hero">
-      <div class="hero-top">
+    <section id="roundScreen" class="screen">
+      <div class="card hero">
         <div class="brand" aria-label="GolfRounds">
           <div class="brand-mark" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -370,146 +119,185 @@
             <h1>라운드별 골프 기록</h1>
           </div>
         </div>
-        <div class="hero-actions">
-          <button class="btn secondary" id="downloadBtn" type="button">JSON 저장</button>
-          <label class="btn secondary" for="importInput" style="cursor:pointer;">JSON 불러오기</label>
-          <input id="importInput" type="file" accept="application/json" class="sr-only" />
-          <button class="btn danger" id="resetBtn" type="button">전체 삭제</button>
-        </div>
       </div>
-      <div class="hero-summary" id="heroSummary">
-        <div class="summary-chip"><span>선택 라운드</span><strong>-</strong></div>
-        <div class="summary-chip"><span>현재 홀</span><strong>-</strong></div>
-        <div class="summary-chip"><span>누적 샷</span><strong>0</strong></div>
-      </div>
-    </section>
 
-    <section class="panel" id="roundSetupPanel">
-      <h2>새 라운드 시작</h2>
-      <div class="field-grid">
-        <div class="field">
-          <label for="roundDate">날짜</label>
-          <input id="roundDate" type="date" />
-        </div>
-        <div class="field">
-          <label for="courseName">코스</label>
-          <input id="courseName" type="text" placeholder="예: MGC" />
-        </div>
-        <div class="field">
-          <label for="holeCount">홀 수</label>
-          <select id="holeCount">
-            <option value="9">9홀</option>
-            <option value="18" selected>18홀</option>
-          </select>
-        </div>
-        <div class="field full">
-          <label for="roundMemo">라운드 메모</label>
-          <textarea id="roundMemo" placeholder="예: 바람 강함, 그린 빠름"></textarea>
-        </div>
-      </div>
-      <div class="actions">
-        <button class="btn primary" id="createRoundBtn" type="button">라운드 만들기</button>
-      </div>
-      <div class="inline-message" id="roundMessage"></div>
-    </section>
-
-    <section class="panel hidden" id="holePanel">
-      <div class="hole-screen">
-        <div class="hole-header">
-          <h2 class="hole-title" id="holeTitle">1번홀</h2>
-          <div class="hole-nav-dots" id="holeDots" aria-label="홀 이동"></div>
-          <div class="hole-pager">
-            <button class="btn secondary" id="prevHoleBtn" type="button">← 이전홀</button>
-            <button class="btn secondary" id="nextHoleBtn" type="button">다음홀 →</button>
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2>라운드 추가</h2>
+            <p>필요한 정보만 먼저 넣고 바로 홀 화면으로 넘어갑니다.</p>
           </div>
         </div>
-
-        <div class="current-hole-panel">
-          <div><h3>현재 홀 입력</h3></div>
-          <div class="field-grid">
-            <div class="field">
-              <label for="holePar">파</label>
-              <select id="holePar">
-                <option value="3">Par 3</option>
-                <option value="4" selected>Par 4</option>
-                <option value="5">Par 5</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="shotNumber">샷 번호</label>
-              <input id="shotNumber" type="number" min="1" inputmode="numeric" placeholder="예: 1" />
-            </div>
-            <div class="field">
-              <label for="shotClub">클럽</label>
-              <input id="shotClub" type="text" placeholder="예: D, 7i, PW" />
-            </div>
-            <div class="field">
-              <label for="shotDist">남은 거리(m)</label>
-              <input id="shotDist" type="number" min="0" inputmode="numeric" placeholder="예: 145" />
-            </div>
-            <div class="field">
-              <label for="shotMiss">미스샷</label>
-              <select id="shotMiss">
-                <option value="">선택 안함</option>
-                <option value="MISS">MISS</option>
-              </select>
-            </div>
-            <div class="field">
-              <label for="shotLocation">위치</label>
-              <input id="shotLocation" type="text" placeholder="예: FW, Rg, G" />
-            </div>
-            <div class="field full">
-              <label for="shotNote">노트</label>
-              <textarea id="shotNote" placeholder="예: 약간 푸시, 짧음"></textarea>
-            </div>
+        <div class="field-grid" style="margin-top: var(--space-4);">
+          <div class="field">
+            <label for="roundDate">날짜</label>
+            <input id="roundDate" type="date" />
           </div>
-          <div class="actions">
-            <button class="btn primary" id="saveShotBtn" type="button">샷 추가</button>
-            <button class="btn ghost hidden" id="cancelEditBtn" type="button">수정 취소</button>
+          <div class="field">
+            <label for="courseName">코스</label>
+            <input id="courseName" type="text" placeholder="예: MGC" />
           </div>
-          <div class="inline-message" id="shotMessage"></div>
+          <div class="field">
+            <label for="holeCount">홀 수</label>
+            <select id="holeCount">
+              <option value="9">9홀</option>
+              <option value="18" selected>18홀</option>
+            </select>
+          </div>
+          <div class="field full">
+            <label for="roundMemo">라운드 메모</label>
+            <textarea id="roundMemo" placeholder="예: 바람 강함, 그린 빠름"></textarea>
+          </div>
         </div>
+        <div class="btn-row">
+          <button class="btn primary" id="createRoundBtn" type="button">라운드 만들고 홀 화면으로</button>
+        </div>
+        <div class="inline-message" id="roundMessage"></div>
+      </div>
 
-        <div class="current-hole-panel">
-          <div><h3>이 홀의 샷 기록</h3></div>
-          <div class="shot-list" id="shotList"></div>
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2>저장된 라운드</h2>
+            <p>기존 라운드를 열면 홀 화면으로 이동합니다.</p>
+          </div>
         </div>
+        <div id="historyContainer" class="round-list" style="margin-top: var(--space-4);"></div>
       </div>
     </section>
 
-    <section class="panel" id="historyPanel">
-      <h2>저장된 라운드</h2>
-      <div id="historyContainer"></div>
+    <section id="holeScreen" class="screen hidden">
+      <div class="card">
+        <div class="hole-topbar">
+          <button class="btn ghost" id="backToRoundsBtn" type="button">← 라운드 목록</button>
+          <div class="btn-row" style="margin-top:0;">
+            <button class="btn secondary" id="downloadBtn" type="button">JSON 저장</button>
+            <label class="btn secondary" for="importInput" style="cursor:pointer;">JSON 불러오기</label>
+            <input id="importInput" type="file" accept="application/json" class="sr-only" />
+            <button class="btn danger" id="resetBtn" type="button">전체 삭제</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2 class="hole-title">홀번호</h2>
+        <div id="holeDots" class="hole-nav-dots" style="margin-top: var(--space-4);"></div>
+        <div class="hole-pager" style="margin-top: var(--space-4);">
+          <button class="btn secondary" id="prevHoleBtn" type="button">← 이전홀</button>
+          <button class="btn secondary" id="nextHoleBtn" type="button">다음홀 →</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h3>현재 홀 입력</h3>
+          </div>
+        </div>
+        <div class="field-grid" style="margin-top: var(--space-4);">
+          <div class="field">
+            <label for="holePar">파</label>
+            <select id="holePar">
+              <option value="3">Par 3</option>
+              <option value="4" selected>Par 4</option>
+              <option value="5">Par 5</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="shotNumber">샷 번호</label>
+            <input id="shotNumber" type="number" min="1" inputmode="numeric" placeholder="예: 1" />
+          </div>
+          <div class="field">
+            <label for="shotClub">클럽</label>
+            <input id="shotClub" type="text" placeholder="예: D, 7i, PW" />
+          </div>
+          <div class="field">
+            <label for="shotDist">남은 거리(m)</label>
+            <input id="shotDist" type="number" min="0" inputmode="numeric" placeholder="예: 145" />
+          </div>
+          <div class="field">
+            <label for="shotMiss">미스샷</label>
+            <select id="shotMiss">
+              <option value="">선택 안함</option>
+              <option value="MISS">MISS</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="shotLocation">위치</label>
+            <input id="shotLocation" type="text" placeholder="예: FW, Rg, G" />
+          </div>
+          <div class="field full">
+            <label for="shotNote">노트</label>
+            <textarea id="shotNote" placeholder="예: 약간 푸시, 짧음"></textarea>
+          </div>
+        </div>
+        <div class="btn-row">
+          <button class="btn primary" id="saveShotBtn" type="button">샷 추가</button>
+          <button class="btn ghost hidden" id="cancelEditBtn" type="button">수정 취소</button>
+        </div>
+        <div class="inline-message" id="shotMessage"></div>
+      </div>
+
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h3>이 홀의 샷 기록</h3>
+          </div>
+        </div>
+        <div id="shotList" class="shot-list" style="margin-top: var(--space-4);"></div>
+      </div>
     </section>
 
-    <p class="footer-note">브라우저 메모리에서 작업하고, 필요할 때 JSON 파일로 저장해두는 개인용 기록 앱 버전입니다.</p>
+    <p class="footer-note">홀 화면은 분리해서 보여주고, 샷 수정은 현재 홀 안에서 처리합니다.</p>
   </main>
 
   <script>
-    const state = { rounds: [], selectedRoundId: null, currentHoleIndex: 0, editingShotId: null };
+    const state = { rounds: [], selectedRoundId: null, currentHoleIndex: 0, editingShotId: null, currentScreen: 'rounds' };
     const $ = (id) => document.getElementById(id);
     const uid = () => Math.random().toString(36).slice(2, 10);
+
     function todayLocal() {
       const now = new Date();
       const tzOffset = now.getTimezoneOffset() * 60000;
       return new Date(now.getTime() - tzOffset).toISOString().slice(0, 10);
     }
+
+    function showScreen(name) {
+      state.currentScreen = name;
+      $('roundScreen').classList.toggle('hidden', name !== 'rounds');
+      $('holeScreen').classList.toggle('hidden', name !== 'hole');
+      window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
     function showMessage(targetId, text, type = 'success') {
       const el = $(targetId);
       el.textContent = text;
       el.className = `inline-message show ${type}`;
     }
+
     function clearMessage(targetId) {
       const el = $(targetId);
       el.textContent = '';
       el.className = 'inline-message';
     }
-    function getSelectedRound() { return state.rounds.find((round) => round.id === state.selectedRoundId) || null; }
+
+    function getSelectedRound() {
+      return state.rounds.find((round) => round.id === state.selectedRoundId) || null;
+    }
+
     function getCurrentHole() {
       const round = getSelectedRound();
       return round ? round.holes[state.currentHoleIndex] || null : null;
     }
-    function roundTitle(round) { return `${round.date || '날짜 미정'} · ${round.course || '코스 미정'}`; }
+
+    function countTotalShots(round) {
+      return round.holes.reduce((sum, hole) => sum + hole.shots.length, 0);
+    }
+
+    function roundTitle(round) {
+      return `${round.date || '날짜 미정'} · ${round.course || '코스 미정'}`;
+    }
+
     function summarizeShot(shot) {
       const bits = [];
       if (shot.club) bits.push(shot.club);
@@ -517,17 +305,19 @@
       if (shot.miss) bits.push(shot.miss);
       return bits.length ? bits.join(' · ') : '요약 없음';
     }
-    function countTotalShots(round) { return round.holes.reduce((sum, hole) => sum + hole.shots.length, 0); }
+
     function getNextShotNumber(hole) {
       if (!hole || !hole.shots.length) return 1;
       const nums = hole.shots.map((shot) => Number(shot.number)).filter((n) => !Number.isNaN(n));
       return nums.length ? Math.max(...nums) + 1 : 1;
     }
+
     function syncShotNumber() {
       const hole = getCurrentHole();
       if (!hole || state.editingShotId) return;
       $('shotNumber').value = getNextShotNumber(hole);
     }
+
     function clearShotForm() {
       state.editingShotId = null;
       $('saveShotBtn').textContent = '샷 추가';
@@ -540,6 +330,15 @@
       clearMessage('shotMessage');
       syncShotNumber();
     }
+
+    function openRound(roundId, holeIndex = 0) {
+      state.selectedRoundId = roundId;
+      state.currentHoleIndex = holeIndex;
+      clearShotForm();
+      renderHoleScreen();
+      showScreen('hole');
+    }
+
     function createRound() {
       const date = $('roundDate').value || todayLocal();
       const course = $('courseName').value.trim() || 'MGC';
@@ -548,62 +347,97 @@
       const holes = Array.from({ length: holeCount }, (_, index) => ({ id: uid(), number: index + 1, par: '4', shots: [] }));
       const round = { id: uid(), date, course, memo, holeCount, holes };
       state.rounds.unshift(round);
-      state.selectedRoundId = round.id;
-      state.currentHoleIndex = 0;
-      clearMessage('roundMessage');
-      showMessage('roundMessage', '새 라운드를 만들었어요. 바로 1번홀 기록을 시작해보세요.');
       $('courseName').value = '';
       $('roundMemo').value = '';
-      render();
-      clearShotForm();
+      clearMessage('roundMessage');
+      renderRoundList();
+      openRound(round.id, 0);
     }
-    function renderSummary() {
-      const round = getSelectedRound();
-      const hole = getCurrentHole();
-      const wrap = $('heroSummary');
-      if (!round || !hole) {
-        wrap.innerHTML = '<div class="summary-chip"><span>선택 라운드</span><strong>-</strong></div><div class="summary-chip"><span>현재 홀</span><strong>-</strong></div><div class="summary-chip"><span>누적 샷</span><strong>0</strong></div>';
+
+    function renderRoundList() {
+      const container = $('historyContainer');
+      if (!state.rounds.length) {
+        container.innerHTML = '<div class="empty">아직 라운드가 없어요. 위에서 첫 라운드를 만들어보세요.</div>';
         return;
       }
-      wrap.innerHTML = `<div class="summary-chip"><span>선택 라운드</span><strong>${round.course}</strong></div><div class="summary-chip"><span>현재 홀</span><strong>${hole.number}H / Par ${hole.par}</strong></div><div class="summary-chip"><span>누적 샷</span><strong>${countTotalShots(round)}</strong></div>`;
+
+      container.innerHTML = '';
+      state.rounds.forEach((round) => {
+        const card = document.createElement('article');
+        card.className = 'round-item';
+        card.innerHTML = `
+          <div class="section-head">
+            <div>
+              <h3>${roundTitle(round)}</h3>
+              <p>${round.memo || '라운드 메모 없음'}</p>
+            </div>
+            <div class="round-meta">
+              <span class="tag">${round.holeCount}홀</span>
+              <span class="tag">총 ${countTotalShots(round)}샷</span>
+            </div>
+          </div>
+          <div class="btn-row" style="margin-top:0;">
+            <button class="btn primary" type="button" data-action="open">홀 화면 열기</button>
+            <button class="btn danger" type="button" data-action="remove">라운드 삭제</button>
+          </div>`;
+
+        card.querySelector('[data-action="open"]').addEventListener('click', () => openRound(round.id, 0));
+        card.querySelector('[data-action="remove"]').addEventListener('click', () => {
+          if (!confirm('이 라운드를 삭제할까요?')) return;
+          state.rounds = state.rounds.filter((item) => item.id !== round.id);
+          if (state.selectedRoundId === round.id) {
+            state.selectedRoundId = null;
+            state.currentHoleIndex = 0;
+          }
+          renderRoundList();
+          showScreen('rounds');
+        });
+
+        container.appendChild(card);
+      });
     }
-    function renderHoleNavigation(round) {
-      const title = $('holeTitle');
+
+    function renderHoleDots(round) {
       const dots = $('holeDots');
-      const hole = getCurrentHole();
-      if (!round || !hole) return;
-      title.textContent = `${hole.number}번홀`;
-      $('holePar').value = hole.par || '4';
       dots.innerHTML = '';
-      round.holes.forEach((item, index) => {
+      round.holes.forEach((hole, index) => {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = `hole-dot${index === state.currentHoleIndex ? ' active' : ''}`;
-        button.textContent = item.number;
-        button.setAttribute('aria-label', `${item.number}번홀로 이동`);
+        button.textContent = hole.number;
+        button.setAttribute('aria-label', `${hole.number}번홀로 이동`);
         button.addEventListener('click', () => {
           state.currentHoleIndex = index;
           clearShotForm();
-          render();
+          renderHoleScreen();
         });
         dots.appendChild(button);
       });
-      $('prevHoleBtn').disabled = state.currentHoleIndex === 0;
-      $('nextHoleBtn').disabled = state.currentHoleIndex === round.holes.length - 1;
     }
-    function renderShotList() {
-      const hole = getCurrentHole();
+
+    function renderShotList(hole) {
       const list = $('shotList');
-      if (!hole) { list.innerHTML = ''; return; }
       if (!hole.shots.length) {
         list.innerHTML = '<div class="empty">아직 이 홀에 기록된 샷이 없어요.</div>';
         return;
       }
+
       list.innerHTML = '';
       [...hole.shots].sort((a, b) => Number(a.number) - Number(b.number)).forEach((shot) => {
         const item = document.createElement('article');
         item.className = 'shot-item';
-        item.innerHTML = `<div class="shot-item-top"><div><strong>${shot.number}번 샷 · ${summarizeShot(shot)}</strong><p>${shot.dist ? `${shot.dist}m` : '거리 미입력'}${shot.note ? ` · ${shot.note}` : ''}</p></div><div class="shot-actions"><button class="btn secondary" type="button" data-action="edit">수정</button><button class="btn danger" type="button" data-action="delete">삭제</button></div></div>`;
+        item.innerHTML = `
+          <div class="shot-item-top">
+            <div>
+              <strong>${shot.number}번 샷 · ${summarizeShot(shot)}</strong>
+              <p>${shot.dist ? `${shot.dist}m` : '거리 미입력'}${shot.note ? ` · ${shot.note}` : ''}</p>
+            </div>
+            <div class="shot-actions">
+              <button class="btn secondary" type="button" data-action="edit">수정</button>
+              <button class="btn danger" type="button" data-action="delete">삭제</button>
+            </div>
+          </div>`;
+
         item.querySelector('[data-action="edit"]').addEventListener('click', () => {
           state.editingShotId = shot.id;
           $('saveShotBtn').textContent = '샷 수정 저장';
@@ -615,78 +449,59 @@
           $('shotLocation').value = shot.location || '';
           $('shotNote').value = shot.note || '';
           clearMessage('shotMessage');
-          window.scrollTo({ top: $('holePanel').offsetTop - 12, behavior: 'smooth' });
+          window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+
         item.querySelector('[data-action="delete"]').addEventListener('click', () => {
           if (!confirm('이 샷을 삭제할까요?')) return;
           hole.shots = hole.shots.filter((entry) => entry.id !== shot.id);
           if (state.editingShotId === shot.id) clearShotForm();
-          render();
+          renderHoleScreen();
           showMessage('shotMessage', '샷을 삭제했어요.');
         });
+
         list.appendChild(item);
       });
     }
-    function renderHistory() {
-      const container = $('historyContainer');
-      if (!state.rounds.length) {
-        container.innerHTML = '<div class="empty">아직 라운드가 없어요. 위에서 첫 라운드를 만들어보세요.</div>';
-        return;
-      }
-      container.innerHTML = '';
-      state.rounds.forEach((round) => {
-        const card = document.createElement('article');
-        card.className = 'round-card';
-        card.innerHTML = `<div class="round-head"><div><h3>${roundTitle(round)}</h3><p>${round.memo || '라운드 메모 없음'}</p></div><div class="round-meta"><span class="tag">${round.holeCount}홀</span><span class="tag">총 ${countTotalShots(round)}샷</span></div></div><div class="actions" style="margin-top:0;"><button class="btn primary" type="button" data-action="open">이 라운드 열기</button><button class="btn danger" type="button" data-action="remove">라운드 삭제</button></div>`;
-        card.querySelector('[data-action="open"]').addEventListener('click', () => {
-          state.selectedRoundId = round.id;
-          state.currentHoleIndex = 0;
-          clearShotForm();
-          render();
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-        card.querySelector('[data-action="remove"]').addEventListener('click', () => {
-          if (!confirm('이 라운드를 삭제할까요?')) return;
-          state.rounds = state.rounds.filter((item) => item.id !== round.id);
-          if (state.selectedRoundId === round.id) {
-            state.selectedRoundId = state.rounds[0]?.id || null;
-            state.currentHoleIndex = 0;
-            clearShotForm();
-          }
-          render();
-        });
-        container.appendChild(card);
-      });
-    }
-    function render() {
-      const round = getSelectedRound();
-      const hasRound = Boolean(round);
-      $('holePanel').classList.toggle('hidden', !hasRound);
-      renderSummary();
-      renderHistory();
-      if (!hasRound) return;
-      renderHoleNavigation(round);
-      renderShotList();
-      syncShotNumber();
-    }
-    function saveShot() {
+
+    function renderHoleScreen() {
       const round = getSelectedRound();
       const hole = getCurrentHole();
-      if (!round || !hole) return showMessage('shotMessage', '먼저 라운드를 선택하세요.', 'error');
+      if (!round || !hole) {
+        showScreen('rounds');
+        return;
+      }
+
+      $('holePar').value = hole.par || '4';
+      renderHoleDots(round);
+      renderShotList(hole);
+      $('prevHoleBtn').disabled = state.currentHoleIndex === 0;
+      $('nextHoleBtn').disabled = state.currentHoleIndex === round.holes.length - 1;
+      syncShotNumber();
+    }
+
+    function saveShot() {
+      const hole = getCurrentHole();
+      if (!hole) return showMessage('shotMessage', '먼저 라운드를 열어 주세요.', 'error');
+
       const club = $('shotClub').value.trim();
       const location = $('shotLocation').value.trim();
       const dist = $('shotDist').value.trim();
       const note = $('shotNote').value.trim();
       const miss = $('shotMiss').value;
       let number = Number($('shotNumber').value);
+
       if (!number) number = state.editingShotId ? Number($('shotNumber').value || 1) : getNextShotNumber(hole);
       if (!club) return showMessage('shotMessage', '클럽을 먼저 입력해 주세요.', 'error');
+
       if (!state.editingShotId && club && location) {
         const ok = confirm('샷을 추가하시겠습니까?');
         if (!ok) return;
       }
+
       hole.par = $('holePar').value;
       const payload = { number, club, dist, miss, location, note };
+
       if (state.editingShotId) {
         const target = hole.shots.find((shot) => shot.id === state.editingShotId);
         if (target) Object.assign(target, payload);
@@ -695,33 +510,40 @@
         hole.shots.push({ id: uid(), ...payload });
         showMessage('shotMessage', '샷을 추가했어요.');
       }
+
       hole.shots.sort((a, b) => Number(a.number) - Number(b.number));
-      render();
+      renderRoundList();
+      renderHoleScreen();
       clearShotForm();
     }
+
     $('createRoundBtn').addEventListener('click', createRound);
+    $('backToRoundsBtn').addEventListener('click', () => showScreen('rounds'));
     $('saveShotBtn').addEventListener('click', saveShot);
     $('cancelEditBtn').addEventListener('click', clearShotForm);
+
     $('prevHoleBtn').addEventListener('click', () => {
       if (state.currentHoleIndex === 0) return;
       state.currentHoleIndex -= 1;
       clearShotForm();
-      render();
+      renderHoleScreen();
     });
+
     $('nextHoleBtn').addEventListener('click', () => {
       const round = getSelectedRound();
       if (!round || state.currentHoleIndex >= round.holes.length - 1) return;
       state.currentHoleIndex += 1;
       clearShotForm();
-      render();
+      renderHoleScreen();
     });
+
     $('holePar').addEventListener('change', () => {
       const hole = getCurrentHole();
       if (!hole) return;
       hole.par = $('holePar').value;
-      renderSummary();
-      renderHoleNavigation(getSelectedRound());
+      renderRoundList();
     });
+
     $('downloadBtn').addEventListener('click', () => {
       const payload = JSON.stringify(state.rounds, null, 2);
       const blob = new Blob([payload], { type: 'application/json' });
@@ -731,6 +553,7 @@
       link.click();
       URL.revokeObjectURL(link.href);
     });
+
     $('importInput').addEventListener('change', async (event) => {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -741,6 +564,7 @@
         state.rounds = parsed.map((round) => ({
           ...round,
           id: round.id || uid(),
+          holeCount: round.holeCount || (Array.isArray(round.holes) ? round.holes.length : 18),
           holes: Array.isArray(round.holes) ? round.holes.map((hole, index) => ({
             id: hole.id || uid(),
             number: hole.number || index + 1,
@@ -751,25 +575,31 @@
         state.selectedRoundId = state.rounds[0]?.id || null;
         state.currentHoleIndex = 0;
         clearShotForm();
-        render();
-        showMessage('roundMessage', 'JSON 데이터를 불러왔어요.');
+        renderRoundList();
+        if (state.selectedRoundId) openRound(state.selectedRoundId, 0);
+        else showScreen('rounds');
       } catch (error) {
         showMessage('roundMessage', 'JSON 파일 형식을 확인해 주세요.', 'error');
+        showScreen('rounds');
       } finally {
         event.target.value = '';
       }
     });
+
     $('resetBtn').addEventListener('click', () => {
       if (!confirm('정말 모든 라운드 기록을 지울까요?')) return;
       state.rounds = [];
       state.selectedRoundId = null;
       state.currentHoleIndex = 0;
       clearShotForm();
-      render();
+      renderRoundList();
+      showScreen('rounds');
       showMessage('roundMessage', '모든 기록을 비웠어요.');
     });
+
     $('roundDate').value = todayLocal();
-    render();
+    renderRoundList();
+    showScreen('rounds');
   </script>
 </body>
 </html>
