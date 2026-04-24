@@ -50,12 +50,12 @@
     .field label { font-size: var(--text-sm); font-weight:600; color: var(--color-text-muted); }
     .field input, .field select {
       width:100%; min-height:48px; border-radius: var(--radius-md); border:1px solid var(--color-border);
-      background:white; padding:.85rem .95rem; color: var(--color-text);
+      background:white; padding:.85rem .95rem; color: var(--color-text); font-size: max(16px, var(--text-base));
     }
     .field input:focus, .field select:focus { outline:2px solid color-mix(in srgb, var(--color-primary) 28%, white); outline-offset:2px; border-color: var(--color-primary); }
     .btn-row { display:flex; gap: var(--space-3); flex-wrap:wrap; margin-top: var(--space-4); }
     .btn {
-      min-height:46px; border-radius:999px; border:1px solid transparent; padding:.82rem 1.05rem; font-size: var(--text-sm);
+      min-height:46px; border-radius:999px; border:1px solid transparent; padding:.82rem 1.05rem; font-size: max(16px, var(--text-sm));
       font-weight:700; display:inline-flex; align-items:center; justify-content:center; gap:var(--space-2);
       transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
     }
@@ -81,7 +81,7 @@
     .hole-nav-dots::-webkit-scrollbar { display:none; }
     .hole-dot { min-width:42px; min-height:42px; border-radius:999px; border:1px solid var(--color-border); background:white; color: var(--color-text-muted); font-size: var(--text-sm); font-weight:700; }
     .hole-dot.active { background: var(--color-primary); border-color: var(--color-primary); color:white; }
-    .hole-pager { display:flex; justify-content:center; gap: var(--space-3); flex-wrap:wrap; }
+    .hole-pager { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: var(--space-3); }
     .option-group { display:grid; gap: var(--space-2); }
     .option-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--space-2); }
     .option-grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
@@ -102,11 +102,13 @@
       .card { padding: var(--space-4); }
       .field-grid { grid-template-columns: 1fr; }
       .section-head, .hole-topbar { flex-direction:column; align-items:stretch; }
-      .btn-row, .shot-actions, .hole-pager { display:grid; grid-template-columns:1fr 1fr; }
-      .btn-row .btn:first-child, .hole-pager .btn:first-child { grid-column:1 / -1; }
+      .btn-row, .shot-actions { display:grid; grid-template-columns:1fr 1fr; }
+      .btn-row .btn:first-child { grid-column:1 / -1; }
+      .hole-pager { grid-template-columns:1fr 1fr; }
       .option-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
       .option-grid.three { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .hole-dot { min-width:38px; min-height:38px; }
+      .hole-pager .btn { width: 100%; }
     }
   </style>
 </head>
@@ -246,7 +248,7 @@
       </div>
     </section>
 
-    <p class="footer-note">홀 화면은 분리해서 보여주고, 샷 수정은 현재 홀 안에서 처리합니다.</p>
+    <p class="footer-note">Created by JunHee Han</p>
   </main>
 
   <script>
