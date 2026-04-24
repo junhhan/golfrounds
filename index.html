@@ -91,10 +91,6 @@
     }
     .option-btn.active { background: var(--color-primary-soft); color: var(--color-primary-hover); border-color: var(--color-primary); }
     .helper-text { color: var(--color-text-muted); font-size: var(--text-xs); line-height: 1.5; }
-    .selection-pill {
-      min-height:48px; border-radius: var(--radius-md); border:1px dashed var(--color-border); background: rgba(255,255,255,.72);
-      display:flex; align-items:center; padding: 0 var(--space-4); color: var(--color-text-muted); font-size: var(--text-sm); font-weight:600;
-    }
     .shot-item { border-radius: var(--radius-lg); padding: var(--space-4); display:grid; gap: var(--space-3); }
     .shot-item-top { display:flex; justify-content:space-between; gap: var(--space-3); align-items:flex-start; }
     .shot-item strong { font-size: var(--text-base); }
@@ -217,7 +213,6 @@
           <div class="field full option-group">
             <label>클럽</label>
             <div id="clubOptions" class="option-grid three"></div>
-            <div class="selection-pill" id="clubSelection">선택 안함</div>
           </div>
           <div class="field">
             <label for="shotDist">남은 거리(m)</label>
@@ -226,18 +221,15 @@
           <div class="field full option-group">
             <label>미스샷</label>
             <div id="missOptions" class="option-grid"></div>
-            <div class="selection-pill" id="missSelection">선택 안함</div>
           </div>
           <div class="field full option-group">
             <label>위치</label>
             <div id="locationOptions" class="option-grid"></div>
-            <div class="selection-pill" id="locationSelection">선택 안함</div>
             <div class="helper-text">FW(페어웨이), H(홀), Rg(러프), B(벙커), G(그린), L(왼쪽), R(오른쪽), Sh(짧음), Lg(김)</div>
           </div>
           <div class="field full option-group">
             <label>노트</label>
             <div id="noteOptions" class="option-grid"></div>
-            <div class="selection-pill" id="noteSelection">선택 안함</div>
             <div class="helper-text">T(탑핑), F(팻), H(훅), S(슬라이스), U(업), D(다운)</div>
           </div>
         </div>
@@ -269,7 +261,7 @@
       currentHoleIndex: 0,
       editingShotId: null,
       currentScreen: 'rounds',
-      draft: { club: '', miss: '', location: '', note: '' }
+      draft: { club: '', miss: '', location: [], note: [] }
     };
 
     const $ = (id) => document.getElementById(id);
@@ -320,9 +312,9 @@
     function summarizeShot(shot) {
       const bits = [];
       if (shot.club) bits.push(shot.club);
-      if (shot.location) bits.push(shot.location);
+      if (Array.isArray(shot.location) ? shot.location.length : shot.location) bits.push(Array.isArray(shot.location) ? shot.location.join(',') : shot.location);
       if (shot.miss) bits.push(shot.miss);
-      if (shot.note) bits.push(`N:${shot.note}`);
+      if (Array.isArray(shot.note) ? shot.note.length : shot.note) bits.push(`N:${Array.isArray(shot.note) ? shot.note.join(',') : shot.note}`);
       return bits.length ? bits.join(' · ') : '요약 없음';
     }
 
@@ -333,8 +325,17 @@
     }
 
     function setDraft(key, value) {
-      state.draft[key] = state.draft[key] === value ? '' : value;
+      if (key === 'location' || key === 'note') {
+        const list = Array.isArray(state.draft[key]) ? [...state.draft[key]] : [];
+        const index = list.indexOf(value);
+        if (index >= 0) list.splice(index, 1);
+        else list.push(value);
+        state.draft[key] = list;
+      } else {
+        state.draft[key] = state.draft[key] === value ? '' : value;
+      }
       renderSelections();
+      maybePromptAutoAdd();
     }
 
     function renderOptionButtons(containerId, options, key) {
@@ -343,7 +344,8 @@
       options.forEach((option) => {
         const button = document.createElement('button');
         button.type = 'button';
-        button.className = `option-btn${state.draft[key] === option ? ' active' : ''}`;
+        const active = Array.isArray(state.draft[key]) ? state.draft[key].includes(option) : state.draft[key] === option;
+        button.className = `option-btn${active ? ' active' : ''}`;
         button.textContent = option;
         button.addEventListener('click', () => setDraft(key, option));
         container.appendChild(button);
@@ -355,10 +357,33 @@
       renderOptionButtons('missOptions', MISS_OPTIONS, 'miss');
       renderOptionButtons('locationOptions', LOCATION_OPTIONS, 'location');
       renderOptionButtons('noteOptions', NOTE_OPTIONS, 'note');
-      $('clubSelection').textContent = state.draft.club || '선택 안함';
-      $('missSelection').textContent = state.draft.miss || '선택 안함';
-      $('locationSelection').textContent = state.draft.location || '선택 안함';
-      $('noteSelection').textContent = state.draft.note || '선택 안함';
+    }
+
+
+    function maybePromptAutoAdd() {
+      const hole = getCurrentHole();
+      if (!hole || state.currentScreen !== 'hole' || state.editingShotId) return;
+      const club = state.draft.club;
+      const hasLocation = Array.isArray(state.draft.location) && state.draft.location.length > 0;
+      if (!club || !hasLocation) return;
+      const number = Number($('shotNumber').value) || getNextShotNumber(hole);
+      const ok = confirm('샷을 추가하시겠습니까?');
+      if (!ok) return;
+      hole.par = $('holePar').value;
+      hole.shots.push({
+        id: uid(),
+        number,
+        club,
+        dist: $('shotDist').value.trim(),
+        miss: state.draft.miss,
+        location: [...state.draft.location],
+        note: [...state.draft.note],
+      });
+      hole.shots.sort((a, b) => Number(a.number) - Number(b.number));
+      renderRoundList();
+      showMessage('shotMessage', '샷을 추가했어요.');
+      clearShotForm();
+      renderHoleScreen();
     }
 
     function syncShotNumber() {
@@ -369,7 +394,7 @@
 
     function clearShotForm() {
       state.editingShotId = null;
-      state.draft = { club: '', miss: '', location: '', note: '' };
+      state.draft = { club: '', miss: '', location: [], note: [] };
       $('saveShotBtn').textContent = '샷 추가';
       $('cancelEditBtn').classList.add('hidden');
       $('shotDist').value = '';
@@ -484,8 +509,8 @@
           state.editingShotId = shot.id;
           state.draft.club = shot.club || '';
           state.draft.miss = shot.miss || '';
-          state.draft.location = shot.location || '';
-          state.draft.note = shot.note || '';
+          state.draft.location = Array.isArray(shot.location) ? [...shot.location] : (shot.location ? [shot.location] : []);
+          state.draft.note = Array.isArray(shot.note) ? [...shot.note] : (shot.note ? [shot.note] : []);
           $('saveShotBtn').textContent = '샷 수정 저장';
           $('cancelEditBtn').classList.remove('hidden');
           $('shotNumber').value = shot.number || '';
@@ -526,16 +551,12 @@
       if (!hole) return showMessage('shotMessage', '먼저 라운드를 열어 주세요.', 'error');
       const club = state.draft.club;
       const miss = state.draft.miss;
-      const location = state.draft.location;
-      const note = state.draft.note;
+      const location = Array.isArray(state.draft.location) ? [...state.draft.location] : [];
+      const note = Array.isArray(state.draft.note) ? [...state.draft.note] : [];
       const dist = $('shotDist').value.trim();
       let number = Number($('shotNumber').value);
       if (!number) number = state.editingShotId ? Number($('shotNumber').value || 1) : getNextShotNumber(hole);
       if (!club) return showMessage('shotMessage', '클럽을 선택해 주세요.', 'error');
-      if (!state.editingShotId && club && location) {
-        const ok = confirm('샷을 추가하시겠습니까?');
-        if (!ok) return;
-      }
       hole.par = $('holePar').value;
       const payload = { number, club, dist, miss, location, note };
       if (state.editingShotId) {
