@@ -1,620 +1,775 @@
 <!DOCTYPE html>
-<html lang="ko" data-theme="light">
+<html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Golf Round Tracker Hole Flow</title>
+  <title>GolfRounds Hole Flow</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,500;7..72,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Literata:opsz,wght@7..72,600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-      --text-sm: clamp(0.875rem, 0.8rem + 0.35vw, 1rem);
-      --text-base: clamp(1rem, 0.95rem + 0.25vw, 1.125rem);
-      --text-lg: clamp(1.125rem, 1rem + 0.75vw, 1.5rem);
-      --text-xl: clamp(1.45rem, 1.2rem + 1vw, 2rem);
-      --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
-      --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem;
-      --radius-sm: 0.5rem; --radius-md: 0.75rem; --radius-lg: 1rem; --radius-xl: 1.25rem;
-      --color-bg: #f7f6f2; --color-surface: #fbfbf9; --color-surface-2: #f1eee8;
-      --color-border: #d8d4cc; --color-text: #26231d; --color-text-muted: #6f6d67;
-      --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-soft: #e5f1f1;
-      --color-danger: #a13544; --color-danger-soft: #f9ecef; --color-success-soft: #edf5eb;
-      --shadow-sm: 0 1px 2px rgba(22,22,22,.06); --shadow-md: 0 10px 25px rgba(22,22,22,.08);
-      --font-body: 'Instrument Sans', system-ui, sans-serif; --font-display: 'Literata', Georgia, serif;
+      --text-xs: clamp(0.75rem, 0.72rem + 0.18vw, 0.875rem);
+      --text-sm: clamp(0.875rem, 0.84rem + 0.22vw, 1rem);
+      --text-base: clamp(1rem, 0.96rem + 0.25vw, 1.125rem);
+      --text-lg: clamp(1.125rem, 1.04rem + 0.42vw, 1.35rem);
+      --text-xl: clamp(1.55rem, 1.25rem + 1vw, 2.1rem);
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 0.75rem;
+      --space-4: 1rem;
+      --space-5: 1.25rem;
+      --space-6: 1.5rem;
+      --space-8: 2rem;
+      --space-10: 2.5rem;
+      --radius-sm: 0.5rem;
+      --radius-md: 0.8rem;
+      --radius-lg: 1rem;
+      --radius-xl: 1.25rem;
+      --color-bg: #f7f6f2;
+      --color-surface: #fbfbf9;
+      --color-surface-2: #f2efe9;
+      --color-border: #d8d4cc;
+      --color-text: #26231d;
+      --color-text-muted: #6f6d67;
+      --color-primary: #01696f;
+      --color-primary-hover: #0c4e54;
+      --color-primary-soft: #dcebea;
+      --color-danger: #a13544;
+      --color-danger-soft: #f8e7ea;
+      --color-warning: #d19900;
+      --shadow-sm: 0 1px 2px rgba(22, 22, 22, 0.06);
+      --shadow-md: 0 10px 28px rgba(22, 22, 22, 0.08);
+      --font-body: 'Instrument Sans', system-ui, sans-serif;
+      --font-display: 'Literata', Georgia, serif;
+      --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
     }
     * { box-sizing: border-box; }
-    html, body { margin: 0; }
+    html { -webkit-text-size-adjust: 100%; }
     body {
-      min-height: 100dvh; font-family: var(--font-body); color: var(--color-text);
-      background: linear-gradient(180deg, #f7f6f2 0%, #efede7 100%);
+      margin: 0;
+      min-height: 100dvh;
+      font-family: var(--font-body);
+      color: var(--color-text);
+      background: linear-gradient(180deg, #f7f6f2 0%, #efece5 100%);
     }
-    button, input, select { font: inherit; }
+    button, input, textarea, select { font: inherit; }
     button { cursor: pointer; }
-    .app { max-width: 780px; margin: 0 auto; padding: var(--space-4); }
-    .panel {
-      background: rgba(251,251,249,.92); border: 1px solid var(--color-border); border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-sm); padding: var(--space-5);
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+    .app {
+      max-width: 820px;
+      margin: 0 auto;
+      padding: var(--space-4);
+      padding-bottom: calc(var(--space-10) + env(safe-area-inset-bottom));
+    }
+    .hero, .panel, .round-card, .shot-item, .inline-message {
+      background: rgba(251, 251, 249, 0.92);
+      border: 1px solid var(--color-border);
+      box-shadow: var(--shadow-sm);
     }
     .hero {
-      position: sticky; top: 0; z-index: 10; backdrop-filter: blur(10px);
-      box-shadow: var(--shadow-md); margin-bottom: var(--space-5);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(12px);
+      display: grid;
+      gap: var(--space-4);
+      margin-bottom: var(--space-5);
     }
-    .hero-top { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-    .brand { display: flex; align-items: center; gap: var(--space-3); }
-    .logo { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: white; background: var(--color-primary); box-shadow: inset 0 1px 0 rgba(255,255,255,.25); }
-    .hero h1 { margin: 0; font-family: var(--font-display); font-size: var(--text-xl); }
-    .hero p { margin: var(--space-1) 0 0; color: var(--color-text-muted); font-size: var(--text-sm); }
-    .theme-toggle { min-height: 44px; min-width: 44px; border-radius: 999px; border: 1px solid var(--color-border); background: white; color: var(--color-text); }
-    .section { margin-top: var(--space-5); }
-    .section h2 { margin: 0 0 var(--space-4); font-size: var(--text-lg); }
-    .grid { display: grid; gap: var(--space-3); }
-    .grid.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .field { display: grid; gap: var(--space-2); }
-    .field label { font-size: var(--text-sm); color: var(--color-text-muted); font-weight: 700; }
-    .field input, .field select {
-      width: 100%; min-height: 48px; padding: 0.85rem 0.9rem; border-radius: var(--radius-md);
-      border: 1px solid var(--color-border); background: white; color: var(--color-text);
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-4);
     }
-    .btn-row { display: flex; gap: var(--space-3); flex-wrap: wrap; }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: var(--space-3);
+    }
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border-radius: 999px;
+      background: var(--color-primary-soft);
+      display: grid;
+      place-items: center;
+      color: var(--color-primary);
+      flex-shrink: 0;
+    }
+    .brand-copy h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: var(--text-xl);
+    }
+    .brand-copy p {
+      margin: var(--space-1) 0 0;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+      justify-content: flex-end;
+    }
     .btn {
-      border: 0; min-height: 46px; border-radius: 999px; padding: 0.8rem 1rem; font-weight: 700;
-      transition: background .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+      min-height: 46px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      padding: 0.82rem 1.05rem;
+      font-size: var(--text-sm);
+      font-weight: 700;
+      transition: background var(--transition), border-color var(--transition), color var(--transition), transform var(--transition);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: var(--space-2);
     }
     .btn:active { transform: translateY(1px); }
-    .btn.primary { background: var(--color-primary); color: white; }
+    .btn.primary { background: var(--color-primary); color: #fff; }
     .btn.primary:hover { background: var(--color-primary-hover); }
-    .btn.secondary { background: var(--color-surface-2); color: var(--color-text); border: 1px solid var(--color-border); }
-    .btn.ghost { background: white; color: var(--color-text); border: 1px solid var(--color-border); }
-    .btn.danger { background: var(--color-danger-soft); color: #7c2230; border: 1px solid #e4bcc3; }
-    .chip-group { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-    .chip {
-      min-height: 42px; padding: 0.72rem 0.95rem; border-radius: 999px; border: 1px solid var(--color-border);
-      background: white; color: var(--color-text); font-size: var(--text-sm); font-weight: 700;
+    .btn.secondary { background: var(--color-surface-2); color: var(--color-text); border-color: var(--color-border); }
+    .btn.danger { background: var(--color-danger-soft); color: #7c2230; border-color: #e5bcc5; }
+    .btn.ghost { background: transparent; border-color: var(--color-border); color: var(--color-text-muted); }
+    .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .hero-summary {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: var(--space-3);
     }
-    .chip.active { background: var(--color-primary); border-color: var(--color-primary); color: white; }
-    .chip.soft.active { background: var(--color-primary-soft); color: var(--color-primary-hover); border-color: #bdd6d7; }
-    .chip.warn.active { background: var(--color-danger-soft); color: #842c39; border-color: #e4bcc3; }
-    .helper { font-size: var(--text-xs); color: var(--color-text-muted); line-height: 1.6; }
-    .status { margin-top: var(--space-3); padding: 0.85rem 0.95rem; border-radius: var(--radius-md); border: 1px solid var(--color-border); background: var(--color-surface-2); font-size: var(--text-sm); color: var(--color-text-muted); }
-    .status.ok { background: var(--color-success-soft); color: #345824; border-color: #cfddc8; }
-    .status.warn { background: #fbf4e2; color: #805000; border-color: #e3d3aa; }
-    .nav-card { display: grid; gap: var(--space-4); }
-    .nav-row { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-    .hole-title { display: grid; gap: var(--space-1); }
-    .hole-title h2 { margin: 0; font-size: var(--text-lg); }
-    .subtle { color: var(--color-text-muted); font-size: var(--text-sm); }
-    .jump-row { display: flex; gap: var(--space-2); overflow-x: auto; padding-bottom: var(--space-1); }
-    .jump-row::-webkit-scrollbar { display: none; }
-    .jump-chip { min-width: 42px; min-height: 42px; border-radius: 999px; border: 1px solid var(--color-border); background: white; font-weight: 700; }
-    .jump-chip.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
-    .shot-list { display: grid; gap: var(--space-3); }
-    .shot-item {
-      display: grid; gap: var(--space-3); border: 1px solid var(--color-border); background: white; border-radius: var(--radius-lg); padding: var(--space-4);
+    .summary-chip {
+      border-radius: var(--radius-lg);
+      background: white;
+      border: 1px solid var(--color-border);
+      padding: var(--space-3) var(--space-4);
     }
-    .shot-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
-    .shot-summary { font-weight: 800; }
-    .shot-meta { color: var(--color-text-muted); font-size: var(--text-sm); }
-    .badge-row { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-    .mini-badge {
-      display: inline-flex; align-items: center; min-height: 30px; padding: 0.35rem 0.65rem; border-radius: 999px;
-      background: var(--color-surface-2); color: var(--color-text-muted); font-size: var(--text-xs); font-weight: 700; border: 1px solid var(--color-border);
+    .summary-chip span {
+      display: block;
+      color: var(--color-text-muted);
+      font-size: var(--text-xs);
+      margin-bottom: var(--space-1);
     }
-    .mini-badge.miss { background: var(--color-danger-soft); color: #842c39; border-color: #e4bcc3; }
-    .empty {
-      padding: var(--space-6); border-radius: var(--radius-lg); border: 1px dashed var(--color-border);
-      background: rgba(255,255,255,.55); color: var(--color-text-muted); text-align: center;
+    .summary-chip strong {
+      display: block;
+      font-size: var(--text-lg);
+      font-variant-numeric: tabular-nums;
+    }
+    .panel {
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+    }
+    .panel h2 {
+      margin: 0 0 var(--space-4);
+      font-size: var(--text-lg);
+    }
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: var(--space-3);
+    }
+    .field { display: grid; gap: var(--space-2); }
+    .field.full { grid-column: 1 / -1; }
+    .field label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--color-text-muted);
+    }
+    .field input, .field select, .field textarea {
+      width: 100%;
+      min-height: 48px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--color-border);
+      background: white;
+      padding: 0.85rem 0.95rem;
+      color: var(--color-text);
+    }
+    .field textarea { min-height: 96px; resize: vertical; }
+    .field input:focus, .field select:focus, .field textarea:focus {
+      outline: 2px solid color-mix(in srgb, var(--color-primary) 28%, white);
+      outline-offset: 2px;
+      border-color: var(--color-primary);
+    }
+    .actions {
+      display: flex;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+      margin-top: var(--space-4);
+    }
+    .inline-message {
+      border-radius: var(--radius-lg);
+      padding: var(--space-3) var(--space-4);
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+      margin-top: var(--space-4);
+      display: none;
+    }
+    .inline-message.show { display: block; }
+    .inline-message.error {
+      background: #fff2f4;
+      color: #7c2230;
+      border-color: #ebc3ca;
+    }
+    .inline-message.success {
+      background: #eef7f6;
+      color: var(--color-primary-hover);
+      border-color: #cfe1df;
     }
     .hidden { display: none !important; }
-    .footer-note { margin-top: var(--space-5); text-align: center; color: var(--color-text-muted); font-size: var(--text-sm); }
-    @media (max-width: 640px) {
-      .grid.two { grid-template-columns: 1fr; }
+    .round-card {
+      border-radius: var(--radius-xl);
+      padding: var(--space-5);
+      margin-bottom: var(--space-5);
+      display: grid;
+      gap: var(--space-4);
+    }
+    .round-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: var(--space-4);
+    }
+    .round-head h3 { margin: 0; font-size: var(--text-lg); }
+    .round-head p {
+      margin: var(--space-1) 0 0;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+    }
+    .round-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-2);
+    }
+    .tag {
+      border-radius: 999px;
+      background: var(--color-surface-2);
+      border: 1px solid var(--color-border);
+      color: var(--color-text-muted);
+      padding: 0.45rem 0.7rem;
+      font-size: var(--text-xs);
+      font-weight: 700;
+    }
+    .hole-screen { display: grid; gap: var(--space-4); }
+    .hole-header { display: grid; gap: var(--space-3); text-align: center; }
+    .hole-title {
+      font-size: var(--text-xl);
+      font-family: var(--font-display);
+      margin: 0;
+    }
+    .hole-nav-dots {
+      display: flex;
+      gap: var(--space-2);
+      overflow-x: auto;
+      padding-bottom: var(--space-1);
+      justify-content: center;
+      scrollbar-width: none;
+    }
+    .hole-nav-dots::-webkit-scrollbar { display: none; }
+    .hole-dot {
+      min-width: 42px;
+      min-height: 42px;
+      border-radius: 999px;
+      border: 1px solid var(--color-border);
+      background: white;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+      font-weight: 700;
+    }
+    .hole-dot.active {
+      background: var(--color-primary);
+      border-color: var(--color-primary);
+      color: white;
+    }
+    .hole-pager {
+      display: flex;
+      justify-content: center;
+      gap: var(--space-3);
+      flex-wrap: wrap;
+    }
+    .current-hole-panel {
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--color-border);
+      background: rgba(255,255,255,0.75);
+      padding: var(--space-5);
+      display: grid;
+      gap: var(--space-4);
+    }
+    .current-hole-panel h3 { margin: 0; font-size: var(--text-lg); }
+    .shot-list { display: grid; gap: var(--space-3); }
+    .shot-item {
+      border-radius: var(--radius-lg);
+      padding: var(--space-4);
+      display: grid;
+      gap: var(--space-3);
+    }
+    .shot-item-top {
+      display: flex;
+      justify-content: space-between;
+      gap: var(--space-3);
+      align-items: flex-start;
+    }
+    .shot-item strong { font-size: var(--text-base); }
+    .shot-item p {
+      margin: var(--space-1) 0 0;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+    }
+    .shot-actions { display: flex; gap: var(--space-2); flex-wrap: wrap; }
+    .empty {
+      border-radius: var(--radius-lg);
+      border: 1px dashed var(--color-border);
+      background: rgba(255,255,255,0.58);
+      padding: var(--space-6);
+      text-align: center;
+      color: var(--color-text-muted);
+    }
+    .footer-note {
+      text-align: center;
+      color: var(--color-text-muted);
+      font-size: var(--text-sm);
+      margin-top: var(--space-4);
+    }
+    @media (max-width: 720px) {
       .app { padding: var(--space-3); }
-      .panel { padding: var(--space-4); }
-      .hero-top, .nav-row { align-items: flex-start; flex-direction: column; }
-      .btn-row { display: grid; grid-template-columns: 1fr 1fr; }
-      .btn-row .btn.primary { grid-column: 1 / -1; }
+      .hero, .panel, .round-card, .current-hole-panel { padding: var(--space-4); }
+      .hero-summary, .field-grid { grid-template-columns: 1fr; }
+      .hero-top, .round-head { flex-direction: column; }
+      .hero-actions, .actions, .shot-actions, .hole-pager { display: grid; grid-template-columns: 1fr 1fr; }
+      .hero-actions .btn:first-child, .actions .btn:first-child, .hole-pager .btn:first-child { grid-column: 1 / -1; }
+      .hole-dot { min-width: 38px; min-height: 38px; }
     }
   </style>
 </head>
 <body>
   <main class="app">
-    <header class="panel hero">
+    <section class="hero">
       <div class="hero-top">
-        <div class="brand">
-          <div class="logo" aria-label="Golf Round Tracker 로고">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8"></circle>
-              <path d="M12 5V19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"></path>
-              <path d="M12 5L17 8.2L12 10.8" fill="currentColor"></path>
+        <div class="brand" aria-label="GolfRounds">
+          <div class="brand-mark" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="8" cy="16" r="3.1" stroke="currentColor" stroke-width="1.7"/>
+              <path d="M11 16H19L15.7 7.2L11 16Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+              <path d="M12.2 6.7V3.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
             </svg>
           </div>
-          <div>
+          <div class="brand-copy">
             <h1>라운드별 골프 기록</h1>
           </div>
         </div>
-        <button class="theme-toggle" type="button" data-theme-toggle aria-label="테마 전환">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-          </svg>
-        </button>
+        <div class="hero-actions">
+          <button class="btn secondary" id="downloadBtn" type="button">JSON 저장</button>
+          <label class="btn secondary" for="importInput" style="cursor:pointer;">JSON 불러오기</label>
+          <input id="importInput" type="file" accept="application/json" class="sr-only" />
+          <button class="btn danger" id="resetBtn" type="button">전체 삭제</button>
+        </div>
       </div>
-    </header>
+      <div class="hero-summary" id="heroSummary">
+        <div class="summary-chip"><span>선택 라운드</span><strong>-</strong></div>
+        <div class="summary-chip"><span>현재 홀</span><strong>-</strong></div>
+        <div class="summary-chip"><span>누적 샷</span><strong>0</strong></div>
+      </div>
+    </section>
 
-    <section class="panel section" id="roundSetupSection">
+    <section class="panel" id="roundSetupPanel">
       <h2>새 라운드 시작</h2>
-      <div class="grid two">
-        <div class="field"><label for="roundDate">날짜</label><input id="roundDate" type="date"></div>
-        <div class="field"><label for="courseName">코스</label><input id="courseName" type="text" placeholder="MGC"></div>
-        <div class="field"><label for="holeCount">홀 수</label><select id="holeCount"><option value="9">9홀</option><option value="18" selected>18홀</option></select></div>
-        <div class="field"><label for="weather">날씨 / 메모</label><input id="weather" type="text" placeholder="예: 비, 바람 강함"></div>
+      <div class="field-grid">
+        <div class="field">
+          <label for="roundDate">날짜</label>
+          <input id="roundDate" type="date" />
+        </div>
+        <div class="field">
+          <label for="courseName">코스</label>
+          <input id="courseName" type="text" placeholder="예: MGC" />
+        </div>
+        <div class="field">
+          <label for="holeCount">홀 수</label>
+          <select id="holeCount">
+            <option value="9">9홀</option>
+            <option value="18" selected>18홀</option>
+          </select>
+        </div>
+        <div class="field full">
+          <label for="roundMemo">라운드 메모</label>
+          <textarea id="roundMemo" placeholder="예: 바람 강함, 그린 빠름"></textarea>
+        </div>
       </div>
-      <div class="btn-row" style="margin-top: var(--space-4);">
-        <button class="btn primary" id="startRoundBtn" type="button">라운드 시작</button>
-        <button class="btn secondary" id="downloadBtn" type="button">JSON 백업 저장</button>
+      <div class="actions">
+        <button class="btn primary" id="createRoundBtn" type="button">라운드 만들기</button>
       </div>
-      <div id="setupStatus" class="status">라운드를 시작하면 홀별 화면으로 이동해서 현재 홀만 기록할 수 있어요.</div>
+      <div class="inline-message" id="roundMessage"></div>
     </section>
 
-    <section class="panel section hidden" id="roundPlaySection">
-      <div class="nav-card">
-        <div class="nav-row">
-          <div class="hole-title">
-            <h2 id="currentHoleTitle">1번홀</h2>
-            <div class="subtle" id="currentRoundMeta">MGC · 라운드 메모 없음</div>
-          </div>
-          <div class="btn-row" style="margin-top: 0;">
-            <button class="btn ghost" id="prevHoleBtn" type="button">← 이전홀</button>
-            <button class="btn ghost" id="nextHoleBtn" type="button">다음홀 →</button>
+    <section class="panel hidden" id="holePanel">
+      <div class="hole-screen">
+        <div class="hole-header">
+          <h2 class="hole-title" id="holeTitle">1번홀</h2>
+          <div class="hole-nav-dots" id="holeDots" aria-label="홀 이동"></div>
+          <div class="hole-pager">
+            <button class="btn secondary" id="prevHoleBtn" type="button">← 이전홀</button>
+            <button class="btn secondary" id="nextHoleBtn" type="button">다음홀 →</button>
           </div>
         </div>
-        <div class="jump-row" id="holeJumpRow"></div>
-      </div>
 
-      <div class="section" style="margin-top: var(--space-5);">
-        <h2>현재 홀 입력</h2>
-        <div class="grid two">
-          <div class="field"><label for="holePar">파</label><select id="holePar"><option value="3">3</option><option value="4" selected>4</option><option value="5">5</option></select></div>
-          <div class="field"><label for="shotNumber">샷 번호</label><input id="shotNumber" type="number" min="1" placeholder="자동 제안"></div>
-          <div class="field"><label for="shotDist">남은 거리(m)</label><input id="shotDist" type="number" min="0" placeholder="예: 145"></div>
-          <div class="field"><label>미스샷</label><div id="missButtons" class="chip-group"></div><input id="shotMiss" type="hidden"></div>
-          <div class="field" style="grid-column: 1 / -1;"><label>클럽</label><div id="clubButtons" class="chip-group"></div><input id="shotClub" type="hidden"></div>
-          <div class="field" style="grid-column: 1 / -1;"><label>위치</label><div id="locationButtons" class="chip-group"></div><input id="shotLocation" type="hidden"><div class="helper">여러 개를 동시에 선택할 수 있어요. FW=페어웨이, Rg=러프, B=벙커, G=그린, H=홀, O=오비, Hz=해저드, L=왼쪽, R=오른쪽, Sh=짧음, Lg=김</div></div>
-          <div class="field" style="grid-column: 1 / -1;"><label>노트</label><div id="noteButtons" class="chip-group"></div><input id="shotNote" type="hidden"><div class="helper">여러 개를 동시에 선택할 수 있어요. T=탑핑, F=팻, H=훅, S=슬라이스, U=업, D=다운</div></div>
+        <div class="current-hole-panel">
+          <div><h3>현재 홀 입력</h3></div>
+          <div class="field-grid">
+            <div class="field">
+              <label for="holePar">파</label>
+              <select id="holePar">
+                <option value="3">Par 3</option>
+                <option value="4" selected>Par 4</option>
+                <option value="5">Par 5</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="shotNumber">샷 번호</label>
+              <input id="shotNumber" type="number" min="1" inputmode="numeric" placeholder="예: 1" />
+            </div>
+            <div class="field">
+              <label for="shotClub">클럽</label>
+              <input id="shotClub" type="text" placeholder="예: D, 7i, PW" />
+            </div>
+            <div class="field">
+              <label for="shotDist">남은 거리(m)</label>
+              <input id="shotDist" type="number" min="0" inputmode="numeric" placeholder="예: 145" />
+            </div>
+            <div class="field">
+              <label for="shotMiss">미스샷</label>
+              <select id="shotMiss">
+                <option value="">선택 안함</option>
+                <option value="MISS">MISS</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="shotLocation">위치</label>
+              <input id="shotLocation" type="text" placeholder="예: FW, Rg, G" />
+            </div>
+            <div class="field full">
+              <label for="shotNote">노트</label>
+              <textarea id="shotNote" placeholder="예: 약간 푸시, 짧음"></textarea>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="btn primary" id="saveShotBtn" type="button">샷 추가</button>
+            <button class="btn ghost hidden" id="cancelEditBtn" type="button">수정 취소</button>
+          </div>
+          <div class="inline-message" id="shotMessage"></div>
         </div>
-        <div class="btn-row" style="margin-top: var(--space-4);">
-          <button class="btn primary" id="saveShotBtn" type="button">샷 추가</button>
-          <button class="btn secondary hidden" id="cancelEditBtn" type="button">수정 취소</button>
-          <button class="btn danger" id="resetRoundBtn" type="button">현재 라운드 전체 삭제</button>
-        </div>
-        <div id="playStatus" class="status">위치나 클럽을 입력하면 자동으로 저장 확인이 뜰 수 있어요.</div>
-      </div>
 
-      <div class="section" style="margin-top: var(--space-5);">
-        <h2>현재 홀 샷 요약</h2>
-        <div id="shotList" class="shot-list"></div>
+        <div class="current-hole-panel">
+          <div><h3>이 홀의 샷 기록</h3></div>
+          <div class="shot-list" id="shotList"></div>
+        </div>
       </div>
     </section>
 
-    <p class="footer-note">다른 홀 기록은 펼치지 않고, 지금 보고 있는 홀 안에서만 입력과 수정을 하도록 정리했어요.</p>
+    <section class="panel" id="historyPanel">
+      <h2>저장된 라운드</h2>
+      <div id="historyContainer"></div>
+    </section>
+
+    <p class="footer-note">브라우저 메모리에서 작업하고, 필요할 때 JSON 파일로 저장해두는 개인용 기록 앱 버전입니다.</p>
   </main>
 
   <script>
-    const state = { rounds: [] };
+    const state = { rounds: [], selectedRoundId: null, currentHoleIndex: 0, editingShotId: null };
     const $ = (id) => document.getElementById(id);
-    let currentRoundId = null;
-    let currentHoleIndex = 0;
-    let editingShotId = null;
-    let autoPromptTimer = null;
-    let suppressAutoPrompt = false;
-
-    const CLUB_OPTIONS = ['D', '3W', '5H', '5I', '6I', '7I', '8I', '9I', 'PW', 'SW', 'PT'];
-    const LOCATION_OPTIONS = ['FW', 'Rg', 'B', 'G', 'H', 'O', 'Hz', 'L', 'R', 'Sh', 'Lg'];
-    const NOTE_OPTIONS = ['T', 'F', 'H', 'S', 'U', 'D'];
-
-    const $all = (selector, root = document) => [...root.querySelectorAll(selector)];
     const uid = () => Math.random().toString(36).slice(2, 10);
-
-    function initTheme() {
-      const toggle = document.querySelector('[data-theme-toggle]');
-      let theme = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-      const apply = () => {
-        document.documentElement.setAttribute('data-theme', theme);
-        toggle.innerHTML = theme === 'dark'
-          ? '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"></path></svg>'
-          : '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>';
-      };
-      apply();
-      toggle.addEventListener('click', () => { theme = theme === 'dark' ? 'light' : 'dark'; apply(); });
+    function todayLocal() {
+      const now = new Date();
+      const tzOffset = now.getTimezoneOffset() * 60000;
+      return new Date(now.getTime() - tzOffset).toISOString().slice(0, 10);
     }
-
-    function save() {
-      localStorage.setItem('golf-round-tracker-holeflow-v1', JSON.stringify({ rounds: state.rounds, currentRoundId, currentHoleIndex }));
-    }
-
-    function load() {
-      try {
-        const raw = localStorage.getItem('golf-round-tracker-holeflow-v1');
-        if (!raw) return;
-        const parsed = JSON.parse(raw);
-        state.rounds = parsed.rounds || [];
-        currentRoundId = parsed.currentRoundId || null;
-        currentHoleIndex = Number.isInteger(parsed.currentHoleIndex) ? parsed.currentHoleIndex : 0;
-      } catch (e) {
-        state.rounds = [];
-        currentRoundId = null;
-        currentHoleIndex = 0;
-      }
-    }
-
-    function createSingleChoiceButtons(containerId, values, hiddenInputId, extraClass = '') {
-      const container = $(containerId);
-      container.innerHTML = '';
-      values.forEach(value => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `chip ${extraClass}`.trim();
-        btn.textContent = value;
-        btn.dataset.value = value;
-        btn.addEventListener('click', () => {
-          const input = $(hiddenInputId);
-          input.value = input.value === value ? '' : value;
-          syncSingleChoiceButtons(containerId, input.value);
-          scheduleAutoPrompt();
-        });
-        container.appendChild(btn);
-      });
-    }
-
-    function syncSingleChoiceButtons(containerId, selectedValue) {
-      $all('.chip', $(containerId)).forEach(btn => btn.classList.toggle('active', btn.dataset.value === selectedValue));
-    }
-
-    function createMultiChoiceButtons(containerId, values, hiddenInputId, extraClass = '') {
-      const container = $(containerId);
-      container.innerHTML = '';
-      values.forEach(value => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = `chip ${extraClass}`.trim();
-        btn.textContent = value;
-        btn.dataset.value = value;
-        btn.addEventListener('click', () => {
-          const input = $(hiddenInputId);
-          const current = parseMulti(input.value);
-          const next = current.includes(value) ? current.filter(item => item !== value) : [...current, value];
-          input.value = next.join(', ');
-          syncMultiChoiceButtons(containerId, next);
-          scheduleAutoPrompt();
-        });
-        container.appendChild(btn);
-      });
-    }
-
-    function syncMultiChoiceButtons(containerId, selectedValues) {
-      const selected = Array.isArray(selectedValues) ? selectedValues : parseMulti(selectedValues);
-      $all('.chip', $(containerId)).forEach(btn => btn.classList.toggle('active', selected.includes(btn.dataset.value)));
-    }
-
-    function parseMulti(value) {
-      if (!value) return [];
-      if (Array.isArray(value)) return value;
-      return String(value).split(',').map(v => v.trim()).filter(Boolean);
-    }
-
-    function initChoiceButtons() {
-      createSingleChoiceButtons('clubButtons', CLUB_OPTIONS, 'shotClub');
-      createMultiChoiceButtons('locationButtons', LOCATION_OPTIONS, 'shotLocation', 'soft');
-      createMultiChoiceButtons('noteButtons', NOTE_OPTIONS, 'shotNote', 'soft');
-      createSingleChoiceButtons('missButtons', ['MISS'], 'shotMiss', 'warn');
-    }
-
-    function getCurrentRound() {
-      return state.rounds.find(round => round.id === currentRoundId) || null;
-    }
-
-    function getCurrentHole() {
-      const round = getCurrentRound();
-      if (!round) return null;
-      return round.holes[currentHoleIndex] || null;
-    }
-
-    function suggestShotNumber() {
-      const hole = getCurrentHole();
-      if (!hole) return;
-      if (editingShotId) return;
-      const numbers = hole.shots.map(shot => Number(shot.number)).filter(n => !Number.isNaN(n));
-      $('shotNumber').value = numbers.length ? Math.max(...numbers) + 1 : 1;
-    }
-
-    function setStatus(targetId, message, type = '') {
+    function showMessage(targetId, text, type = 'success') {
       const el = $(targetId);
-      el.textContent = message;
-      el.className = 'status' + (type ? ` ${type}` : '');
+      el.textContent = text;
+      el.className = `inline-message show ${type}`;
     }
-
-    function createRound() {
-      const holeCount = Number($('holeCount').value);
-      const holes = Array.from({ length: holeCount }, (_, index) => ({
-        id: uid(),
-        number: index + 1,
-        par: index === 0 ? '4' : '4',
-        shots: []
-      }));
-      const round = {
-        id: uid(),
-        date: $('roundDate').value,
-        course: $('courseName').value.trim() || 'MGC',
-        weather: $('weather').value.trim(),
-        holeCount,
-        holes
-      };
-      state.rounds.push(round);
-      currentRoundId = round.id;
-      currentHoleIndex = 0;
-      editingShotId = null;
-      save();
-      render();
-      setStatus('setupStatus', '새 라운드를 시작했어요. 이제 현재 홀만 보면서 기록하면 돼요.', 'ok');
+    function clearMessage(targetId) {
+      const el = $(targetId);
+      el.textContent = '';
+      el.className = 'inline-message';
     }
-
-    function renderHoleJump() {
-      const round = getCurrentRound();
-      const row = $('holeJumpRow');
-      row.innerHTML = '';
-      if (!round) return;
-      round.holes.forEach((hole, index) => {
-        const btn = document.createElement('button');
-        btn.type = 'button';
-        btn.className = 'jump-chip' + (index === currentHoleIndex ? ' active' : '');
-        btn.textContent = hole.number;
-        btn.addEventListener('click', () => moveToHole(index));
-        row.appendChild(btn);
-      });
+    function getSelectedRound() { return state.rounds.find((round) => round.id === state.selectedRoundId) || null; }
+    function getCurrentHole() {
+      const round = getSelectedRound();
+      return round ? round.holes[state.currentHoleIndex] || null : null;
     }
-
-    function renderCurrentHoleHeader() {
-      const round = getCurrentRound();
+    function roundTitle(round) { return `${round.date || '날짜 미정'} · ${round.course || '코스 미정'}`; }
+    function summarizeShot(shot) {
+      const bits = [];
+      if (shot.club) bits.push(shot.club);
+      if (shot.location) bits.push(shot.location);
+      if (shot.miss) bits.push(shot.miss);
+      return bits.length ? bits.join(' · ') : '요약 없음';
+    }
+    function countTotalShots(round) { return round.holes.reduce((sum, hole) => sum + hole.shots.length, 0); }
+    function getNextShotNumber(hole) {
+      if (!hole || !hole.shots.length) return 1;
+      const nums = hole.shots.map((shot) => Number(shot.number)).filter((n) => !Number.isNaN(n));
+      return nums.length ? Math.max(...nums) + 1 : 1;
+    }
+    function syncShotNumber() {
       const hole = getCurrentHole();
-      if (!round || !hole) return;
-      $('currentHoleTitle').textContent = `${hole.number}번홀`;
-      $('currentRoundMeta').textContent = `${round.course || 'MGC'} · ${round.weather || '라운드 메모 없음'}`;
-      $('holePar').value = hole.par || '4';
-      $('prevHoleBtn').disabled = currentHoleIndex === 0;
-      $('nextHoleBtn').disabled = currentHoleIndex === round.holeCount - 1;
+      if (!hole || state.editingShotId) return;
+      $('shotNumber').value = getNextShotNumber(hole);
     }
-
-    function renderShotList() {
-      const hole = getCurrentHole();
-      const container = $('shotList');
-      if (!hole || !hole.shots.length) {
-        container.innerHTML = '<div class="empty">아직 이 홀의 샷 기록이 없어요. 위에서 첫 샷을 남겨보세요.</div>';
-        return;
-      }
-      container.innerHTML = '';
-      [...hole.shots].sort((a, b) => a.number - b.number).forEach(shot => {
-        const item = document.createElement('article');
-        item.className = 'shot-item';
-        const locationSummary = Array.isArray(shot.location) && shot.location.length ? shot.location.join('·') : '-';
-        const noteSummary = Array.isArray(shot.note) && shot.note.length ? shot.note.join('·') : '-';
-        item.innerHTML = `
-          <div class="shot-head">
-            <div>
-              <div class="shot-summary">${shot.number}번 샷 · ${shot.club || '클럽 미선택'}</div>
-              <div class="shot-meta">${shot.dist ? shot.dist + 'm' : '거리 미입력'} · 위치 ${locationSummary}</div>
-            </div>
-            <div class="btn-row" style="margin-top:0;">
-              <button class="btn secondary" type="button" data-edit-id="${shot.id}">수정</button>
-              <button class="btn danger" type="button" data-delete-id="${shot.id}">삭제</button>
-            </div>
-          </div>
-          <div class="badge-row">
-            <span class="mini-badge">클럽 ${shot.club || '-'}</span>
-            <span class="mini-badge">위치 ${locationSummary}</span>
-            <span class="mini-badge">노트 ${noteSummary}</span>
-            ${shot.miss ? '<span class="mini-badge miss">미스샷</span>' : ''}
-          </div>
-        `;
-        container.appendChild(item);
-      });
-      $all('[data-edit-id]', container).forEach(btn => btn.addEventListener('click', () => startEditing(btn.dataset.editId)));
-      $all('[data-delete-id]', container).forEach(btn => btn.addEventListener('click', () => deleteShot(btn.dataset.deleteId)));
-    }
-
-    function render() {
-      const hasCurrentRound = Boolean(getCurrentRound());
-      $('roundSetupSection').classList.toggle('hidden', hasCurrentRound);
-      $('roundPlaySection').classList.toggle('hidden', !hasCurrentRound);
-      if (!hasCurrentRound) return;
-      renderCurrentHoleHeader();
-      renderHoleJump();
-      renderShotList();
-      suggestShotNumber();
-    }
-
-    function moveToHole(index) {
-      const round = getCurrentRound();
-      if (!round) return;
-      if (index < 0 || index >= round.holeCount) return;
-      currentHoleIndex = index;
-      cancelEdit(true);
-      save();
-      render();
-      setStatus('playStatus', `${round.holes[index].number}번홀로 이동했어요. 현재 홀만 보고 기록하면 돼요.`);
-    }
-
     function clearShotForm() {
-      editingShotId = null;
-      suppressAutoPrompt = true;
-      $('shotNumber').value = '';
-      $('shotDist').value = '';
-      $('shotClub').value = '';
-      $('shotLocation').value = '';
-      $('shotNote').value = '';
-      $('shotMiss').value = '';
-      syncSingleChoiceButtons('clubButtons', '');
-      syncMultiChoiceButtons('locationButtons', []);
-      syncMultiChoiceButtons('noteButtons', []);
-      syncSingleChoiceButtons('missButtons', '');
+      state.editingShotId = null;
       $('saveShotBtn').textContent = '샷 추가';
       $('cancelEditBtn').classList.add('hidden');
-      suppressAutoPrompt = false;
-      suggestShotNumber();
+      $('shotClub').value = '';
+      $('shotDist').value = '';
+      $('shotMiss').value = '';
+      $('shotLocation').value = '';
+      $('shotNote').value = '';
+      clearMessage('shotMessage');
+      syncShotNumber();
     }
-
-    function collectShotPayload() {
-      return {
-        number: Number($('shotNumber').value) || getSuggestedNumberFallback(),
-        dist: $('shotDist').value,
-        club: $('shotClub').value.trim(),
-        location: parseMulti($('shotLocation').value),
-        note: parseMulti($('shotNote').value),
-        miss: $('shotMiss').value === 'MISS'
-      };
-    }
-
-    function getSuggestedNumberFallback() {
-      const hole = getCurrentHole();
-      if (!hole) return 1;
-      const numbers = hole.shots.map(shot => Number(shot.number)).filter(n => !Number.isNaN(n));
-      return numbers.length ? Math.max(...numbers) + 1 : 1;
-    }
-
-    function startEditing(shotId) {
-      const hole = getCurrentHole();
-      const shot = hole?.shots.find(item => item.id === shotId);
-      if (!shot) return;
-      editingShotId = shot.id;
-      suppressAutoPrompt = true;
-      $('shotNumber').value = shot.number ?? '';
-      $('shotDist').value = shot.dist ?? '';
-      $('shotClub').value = shot.club ?? '';
-      $('shotLocation').value = Array.isArray(shot.location) ? shot.location.join(', ') : '';
-      $('shotNote').value = Array.isArray(shot.note) ? shot.note.join(', ') : '';
-      $('shotMiss').value = shot.miss ? 'MISS' : '';
-      syncSingleChoiceButtons('clubButtons', $('shotClub').value);
-      syncMultiChoiceButtons('locationButtons', parseMulti($('shotLocation').value));
-      syncMultiChoiceButtons('noteButtons', parseMulti($('shotNote').value));
-      syncSingleChoiceButtons('missButtons', $('shotMiss').value);
-      $('saveShotBtn').textContent = '샷 수정 저장';
-      $('cancelEditBtn').classList.remove('hidden');
-      suppressAutoPrompt = false;
-      setStatus('playStatus', `${shot.number}번 샷을 수정 중이에요. 수정 후 저장 버튼을 눌러 주세요.`, 'warn');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    function cancelEdit(silent = false) {
+    function createRound() {
+      const date = $('roundDate').value || todayLocal();
+      const course = $('courseName').value.trim() || 'MGC';
+      const memo = $('roundMemo').value.trim();
+      const holeCount = Number($('holeCount').value || 18);
+      const holes = Array.from({ length: holeCount }, (_, index) => ({ id: uid(), number: index + 1, par: '4', shots: [] }));
+      const round = { id: uid(), date, course, memo, holeCount, holes };
+      state.rounds.unshift(round);
+      state.selectedRoundId = round.id;
+      state.currentHoleIndex = 0;
+      clearMessage('roundMessage');
+      showMessage('roundMessage', '새 라운드를 만들었어요. 바로 1번홀 기록을 시작해보세요.');
+      $('courseName').value = '';
+      $('roundMemo').value = '';
+      render();
       clearShotForm();
-      if (!silent) setStatus('playStatus', '수정을 취소했어요. 다시 새 샷을 추가할 수 있어요.');
     }
-
-    function saveShot(force = false) {
+    function renderSummary() {
+      const round = getSelectedRound();
       const hole = getCurrentHole();
-      if (!hole) return;
-      const payload = collectShotPayload();
-      if (!payload.club && !payload.location.length && !payload.miss) {
-        setStatus('playStatus', '클럽, 위치, 미스샷 중 하나는 입력해야 저장할 수 있어요.', 'warn');
+      const wrap = $('heroSummary');
+      if (!round || !hole) {
+        wrap.innerHTML = '<div class="summary-chip"><span>선택 라운드</span><strong>-</strong></div><div class="summary-chip"><span>현재 홀</span><strong>-</strong></div><div class="summary-chip"><span>누적 샷</span><strong>0</strong></div>';
         return;
       }
-      if (!force && shouldPromptForSave()) {
+      wrap.innerHTML = `<div class="summary-chip"><span>선택 라운드</span><strong>${round.course}</strong></div><div class="summary-chip"><span>현재 홀</span><strong>${hole.number}H / Par ${hole.par}</strong></div><div class="summary-chip"><span>누적 샷</span><strong>${countTotalShots(round)}</strong></div>`;
+    }
+    function renderHoleNavigation(round) {
+      const title = $('holeTitle');
+      const dots = $('holeDots');
+      const hole = getCurrentHole();
+      if (!round || !hole) return;
+      title.textContent = `${hole.number}번홀`;
+      $('holePar').value = hole.par || '4';
+      dots.innerHTML = '';
+      round.holes.forEach((item, index) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `hole-dot${index === state.currentHoleIndex ? ' active' : ''}`;
+        button.textContent = item.number;
+        button.setAttribute('aria-label', `${item.number}번홀로 이동`);
+        button.addEventListener('click', () => {
+          state.currentHoleIndex = index;
+          clearShotForm();
+          render();
+        });
+        dots.appendChild(button);
+      });
+      $('prevHoleBtn').disabled = state.currentHoleIndex === 0;
+      $('nextHoleBtn').disabled = state.currentHoleIndex === round.holes.length - 1;
+    }
+    function renderShotList() {
+      const hole = getCurrentHole();
+      const list = $('shotList');
+      if (!hole) { list.innerHTML = ''; return; }
+      if (!hole.shots.length) {
+        list.innerHTML = '<div class="empty">아직 이 홀에 기록된 샷이 없어요.</div>';
+        return;
+      }
+      list.innerHTML = '';
+      [...hole.shots].sort((a, b) => Number(a.number) - Number(b.number)).forEach((shot) => {
+        const item = document.createElement('article');
+        item.className = 'shot-item';
+        item.innerHTML = `<div class="shot-item-top"><div><strong>${shot.number}번 샷 · ${summarizeShot(shot)}</strong><p>${shot.dist ? `${shot.dist}m` : '거리 미입력'}${shot.note ? ` · ${shot.note}` : ''}</p></div><div class="shot-actions"><button class="btn secondary" type="button" data-action="edit">수정</button><button class="btn danger" type="button" data-action="delete">삭제</button></div></div>`;
+        item.querySelector('[data-action="edit"]').addEventListener('click', () => {
+          state.editingShotId = shot.id;
+          $('saveShotBtn').textContent = '샷 수정 저장';
+          $('cancelEditBtn').classList.remove('hidden');
+          $('shotNumber').value = shot.number || '';
+          $('shotClub').value = shot.club || '';
+          $('shotDist').value = shot.dist || '';
+          $('shotMiss').value = shot.miss || '';
+          $('shotLocation').value = shot.location || '';
+          $('shotNote').value = shot.note || '';
+          clearMessage('shotMessage');
+          window.scrollTo({ top: $('holePanel').offsetTop - 12, behavior: 'smooth' });
+        });
+        item.querySelector('[data-action="delete"]').addEventListener('click', () => {
+          if (!confirm('이 샷을 삭제할까요?')) return;
+          hole.shots = hole.shots.filter((entry) => entry.id !== shot.id);
+          if (state.editingShotId === shot.id) clearShotForm();
+          render();
+          showMessage('shotMessage', '샷을 삭제했어요.');
+        });
+        list.appendChild(item);
+      });
+    }
+    function renderHistory() {
+      const container = $('historyContainer');
+      if (!state.rounds.length) {
+        container.innerHTML = '<div class="empty">아직 라운드가 없어요. 위에서 첫 라운드를 만들어보세요.</div>';
+        return;
+      }
+      container.innerHTML = '';
+      state.rounds.forEach((round) => {
+        const card = document.createElement('article');
+        card.className = 'round-card';
+        card.innerHTML = `<div class="round-head"><div><h3>${roundTitle(round)}</h3><p>${round.memo || '라운드 메모 없음'}</p></div><div class="round-meta"><span class="tag">${round.holeCount}홀</span><span class="tag">총 ${countTotalShots(round)}샷</span></div></div><div class="actions" style="margin-top:0;"><button class="btn primary" type="button" data-action="open">이 라운드 열기</button><button class="btn danger" type="button" data-action="remove">라운드 삭제</button></div>`;
+        card.querySelector('[data-action="open"]').addEventListener('click', () => {
+          state.selectedRoundId = round.id;
+          state.currentHoleIndex = 0;
+          clearShotForm();
+          render();
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        card.querySelector('[data-action="remove"]').addEventListener('click', () => {
+          if (!confirm('이 라운드를 삭제할까요?')) return;
+          state.rounds = state.rounds.filter((item) => item.id !== round.id);
+          if (state.selectedRoundId === round.id) {
+            state.selectedRoundId = state.rounds[0]?.id || null;
+            state.currentHoleIndex = 0;
+            clearShotForm();
+          }
+          render();
+        });
+        container.appendChild(card);
+      });
+    }
+    function render() {
+      const round = getSelectedRound();
+      const hasRound = Boolean(round);
+      $('holePanel').classList.toggle('hidden', !hasRound);
+      renderSummary();
+      renderHistory();
+      if (!hasRound) return;
+      renderHoleNavigation(round);
+      renderShotList();
+      syncShotNumber();
+    }
+    function saveShot() {
+      const round = getSelectedRound();
+      const hole = getCurrentHole();
+      if (!round || !hole) return showMessage('shotMessage', '먼저 라운드를 선택하세요.', 'error');
+      const club = $('shotClub').value.trim();
+      const location = $('shotLocation').value.trim();
+      const dist = $('shotDist').value.trim();
+      const note = $('shotNote').value.trim();
+      const miss = $('shotMiss').value;
+      let number = Number($('shotNumber').value);
+      if (!number) number = state.editingShotId ? Number($('shotNumber').value || 1) : getNextShotNumber(hole);
+      if (!club) return showMessage('shotMessage', '클럽을 먼저 입력해 주세요.', 'error');
+      if (!state.editingShotId && club && location) {
         const ok = confirm('샷을 추가하시겠습니까?');
         if (!ok) return;
       }
-      if (editingShotId) {
-        const shot = hole.shots.find(item => item.id === editingShotId);
-        if (shot) Object.assign(shot, payload);
-        setStatus('playStatus', `${payload.number}번 샷을 수정했어요.`, 'ok');
+      hole.par = $('holePar').value;
+      const payload = { number, club, dist, miss, location, note };
+      if (state.editingShotId) {
+        const target = hole.shots.find((shot) => shot.id === state.editingShotId);
+        if (target) Object.assign(target, payload);
+        showMessage('shotMessage', '샷을 수정했어요.');
       } else {
         hole.shots.push({ id: uid(), ...payload });
-        setStatus('playStatus', `${payload.number}번 샷을 저장했어요.`, 'ok');
+        showMessage('shotMessage', '샷을 추가했어요.');
       }
-      hole.par = $('holePar').value;
+      hole.shots.sort((a, b) => Number(a.number) - Number(b.number));
+      render();
       clearShotForm();
-      save();
-      renderShotList();
-      save();
     }
-
-    function shouldPromptForSave() {
-      return !editingShotId;
-    }
-
-    function scheduleAutoPrompt() {
-      if (suppressAutoPrompt || editingShotId) return;
-      clearTimeout(autoPromptTimer);
-      autoPromptTimer = setTimeout(() => {
-        if (!canSuggestSave()) return;
-        const ok = confirm('샷을 추가하시겠습니까?');
-        if (ok) saveShot(true);
-      }, 850);
-    }
-
-    function canSuggestSave() {
-      if (editingShotId) return false;
-      const hasClub = Boolean($('shotClub').value.trim());
-      const hasLocation = parseMulti($('shotLocation').value).length > 0;
-      const hasMiss = $('shotMiss').value === 'MISS';
-      return hasLocation && (hasClub || hasMiss);
-    }
-
-    function deleteShot(shotId) {
+    $('createRoundBtn').addEventListener('click', createRound);
+    $('saveShotBtn').addEventListener('click', saveShot);
+    $('cancelEditBtn').addEventListener('click', clearShotForm);
+    $('prevHoleBtn').addEventListener('click', () => {
+      if (state.currentHoleIndex === 0) return;
+      state.currentHoleIndex -= 1;
+      clearShotForm();
+      render();
+    });
+    $('nextHoleBtn').addEventListener('click', () => {
+      const round = getSelectedRound();
+      if (!round || state.currentHoleIndex >= round.holes.length - 1) return;
+      state.currentHoleIndex += 1;
+      clearShotForm();
+      render();
+    });
+    $('holePar').addEventListener('change', () => {
       const hole = getCurrentHole();
       if (!hole) return;
-      if (!confirm('이 샷을 삭제할까요?')) return;
-      hole.shots = hole.shots.filter(shot => shot.id !== shotId);
-      if (editingShotId === shotId) clearShotForm();
-      save();
-      renderShotList();
-      setStatus('playStatus', '샷을 삭제했어요.');
-    }
-
-    function resetCurrentRound() {
-      if (!confirm('현재 라운드를 통째로 삭제할까요?')) return;
-      state.rounds.splice(state.rounds.findIndex(round => round.id === currentRoundId), 1);
-      currentRoundId = null;
-      currentHoleIndex = 0;
-      editingShotId = null;
+      hole.par = $('holePar').value;
+      renderSummary();
+      renderHoleNavigation(getSelectedRound());
+    });
+    $('downloadBtn').addEventListener('click', () => {
+      const payload = JSON.stringify(state.rounds, null, 2);
+      const blob = new Blob([payload], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = `golf-rounds-${todayLocal()}.json`;
+      link.click();
+      URL.revokeObjectURL(link.href);
+    });
+    $('importInput').addEventListener('change', async (event) => {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        if (!Array.isArray(parsed)) throw new Error('invalid');
+        state.rounds = parsed.map((round) => ({
+          ...round,
+          id: round.id || uid(),
+          holes: Array.isArray(round.holes) ? round.holes.map((hole, index) => ({
+            id: hole.id || uid(),
+            number: hole.number || index + 1,
+            par: String(hole.par || 4),
+            shots: Array.isArray(hole.shots) ? hole.shots.map((shot) => ({ id: shot.id || uid(), ...shot })) : [],
+          })) : [],
+        }));
+        state.selectedRoundId = state.rounds[0]?.id || null;
+        state.currentHoleIndex = 0;
+        clearShotForm();
+        render();
+        showMessage('roundMessage', 'JSON 데이터를 불러왔어요.');
+      } catch (error) {
+        showMessage('roundMessage', 'JSON 파일 형식을 확인해 주세요.', 'error');
+      } finally {
+        event.target.value = '';
+      }
+    });
+    $('resetBtn').addEventListener('click', () => {
+      if (!confirm('정말 모든 라운드 기록을 지울까요?')) return;
+      state.rounds = [];
+      state.selectedRoundId = null;
+      state.currentHoleIndex = 0;
       clearShotForm();
-      save();
       render();
-      setStatus('setupStatus', '라운드를 삭제했어요. 새 라운드를 시작할 수 있어요.');
-    }
-
-    function downloadBackup() {
-      const blob = new Blob([JSON.stringify(state.rounds, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      const today = new Date().toISOString().slice(0, 10);
-      a.href = URL.createObjectURL(blob);
-      a.download = `golf-round-log-${today}.json`;
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-
-    function attachEvents() {
-      $('startRoundBtn').addEventListener('click', createRound);
-      $('downloadBtn').addEventListener('click', downloadBackup);
-      $('prevHoleBtn').addEventListener('click', () => moveToHole(currentHoleIndex - 1));
-      $('nextHoleBtn').addEventListener('click', () => moveToHole(currentHoleIndex + 1));
-      $('saveShotBtn').addEventListener('click', () => saveShot(false));
-      $('cancelEditBtn').addEventListener('click', () => cancelEdit(false));
-      $('resetRoundBtn').addEventListener('click', resetCurrentRound);
-      $('holePar').addEventListener('change', () => {
-        const hole = getCurrentHole();
-        if (!hole) return;
-        hole.par = $('holePar').value;
-        save();
-      });
-      ['shotNumber', 'shotDist'].forEach(id => $(id).addEventListener('input', scheduleAutoPrompt));
-    }
-
-    initTheme();
-    initChoiceButtons();
-    attachEvents();
-    load();
-    $('roundDate').value = new Date().toISOString().slice(0, 10);
+      showMessage('roundMessage', '모든 기록을 비웠어요.');
+    });
+    $('roundDate').value = todayLocal();
     render();
-    if (getCurrentRound()) setStatus('playStatus', '이전 라운드를 불러왔어요. 현재 홀에서 계속 기록할 수 있어요.', 'ok');
   </script>
 </body>
 </html>
