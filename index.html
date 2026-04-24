@@ -76,7 +76,6 @@
   <main class="app">
     <section class="hero">
       <h1>라운드별 골프 기록</h1>
-      <p>홀 번호와 클럽은 단일 선택, 위치와 노트는 복수 선택이 가능한 모바일용 버전이에요.</p>
     </section>
 
     <section class="section">
@@ -107,9 +106,9 @@
         <div class="field"><label for="shotNumber">샷 번호</label><input id="shotNumber" type="number" min="1" placeholder="예: 1"></div>
         <div class="field"><label for="shotDist">남은 거리(m)</label><input id="shotDist" type="number" min="0" placeholder="예: 145"></div>
         <div class="field" style="grid-column: 1 / -1;"><label>클럽</label><div id="clubButtons" class="chip-group"></div><input id="shotClub" type="hidden"></div>
-        <div class="field" style="grid-column: 1 / -1;"><label>위치</label><div id="locationButtons" class="chip-group"></div><input id="shotLocation" type="hidden"><div class="helper">여러 개를 동시에 선택할 수 있어요. FW=페어웨이, Rg=러프, B=벙커, G=그린, H=홀, O=오비, Hz=해저드, L=왼쪽, R=오른쪽, Sh=짧음, Lg=김</div></div>
+        <div class="field" style="grid-column: 1 / -1;"><label>위치</label><div id="locationButtons" class="chip-group"></div><input id="shotLocation" type="hidden"><div class="helper">FW=페어웨이, Rg=러프, B=벙커, G=그린, H=홀, O=오비, Hz=해저드, L=왼쪽, R=오른쪽, Sh=짧음, Lg=김</div></div>
       </div>
-      <div class="field" style="margin-top: var(--space-3);"><label>노트</label><div id="noteButtons" class="chip-group"></div><input id="shotNote" type="hidden"><div class="helper">여러 개를 동시에 선택할 수 있어요. T=탑핑, F=팻, H=훅, S=슬라이스, U=업, D=다운</div></div>
+      <div class="field" style="margin-top: var(--space-3);"><label>노트</label><div id="noteButtons" class="chip-group"></div><input id="shotNote" type="hidden"><div class="helper">T=탑핑, F=팻, H=훅, S=슬라이스, U=업, D=다운</div></div>
       <div class="btn-row">
         <button class="btn primary" id="addShotBtn">샷 추가</button>
         <button class="btn secondary" id="captureGpsBtn" type="button">현재 위치 기록</button>
