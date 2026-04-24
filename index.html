@@ -20,7 +20,7 @@
       --color-bg: #f7f6f2; --color-surface: #fbfbf9; --color-surface-2: #f2efe9;
       --color-border: #d8d4cc; --color-text: #26231d; --color-text-muted: #6f6d67;
       --color-primary: #01696f; --color-primary-hover: #0c4e54; --color-primary-soft: #dcebea;
-      --color-danger: #a13544; --color-danger-soft: #f8e7ea;
+      --color-danger-soft: #f8e7ea; --color-danger-text: #7c2230;
       --shadow-sm: 0 1px 2px rgba(22,22,22,.06); --shadow-md: 0 10px 28px rgba(22,22,22,.08);
       --font-body: 'Instrument Sans', system-ui, sans-serif; --font-display: 'Literata', Georgia, serif;
       --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -31,7 +31,7 @@
     button, input, textarea, select { font: inherit; }
     button { cursor: pointer; }
     .sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
-    .app { max-width: 820px; margin: 0 auto; padding: var(--space-4); padding-bottom: calc(var(--space-10) + env(safe-area-inset-bottom)); }
+    .app { max-width: 840px; margin: 0 auto; padding: var(--space-4); padding-bottom: calc(var(--space-10) + env(safe-area-inset-bottom)); }
     .hidden { display:none !important; }
     .screen { display:grid; gap: var(--space-5); }
     .card, .shot-item, .inline-message { background: rgba(251,251,249,.94); border:1px solid var(--color-border); box-shadow: var(--shadow-sm); }
@@ -48,12 +48,11 @@
     .field { display:grid; gap: var(--space-2); }
     .field.full { grid-column: 1 / -1; }
     .field label { font-size: var(--text-sm); font-weight:600; color: var(--color-text-muted); }
-    .field input, .field select, .field textarea {
+    .field input, .field select {
       width:100%; min-height:48px; border-radius: var(--radius-md); border:1px solid var(--color-border);
-      background:white; padding: .85rem .95rem; color: var(--color-text);
+      background:white; padding:.85rem .95rem; color: var(--color-text);
     }
-    .field textarea { min-height:96px; resize: vertical; }
-    .field input:focus, .field select:focus, .field textarea:focus { outline:2px solid color-mix(in srgb, var(--color-primary) 28%, white); outline-offset:2px; border-color: var(--color-primary); }
+    .field input:focus, .field select:focus { outline:2px solid color-mix(in srgb, var(--color-primary) 28%, white); outline-offset:2px; border-color: var(--color-primary); }
     .btn-row { display:flex; gap: var(--space-3); flex-wrap:wrap; margin-top: var(--space-4); }
     .btn {
       min-height:46px; border-radius:999px; border:1px solid transparent; padding:.82rem 1.05rem; font-size: var(--text-sm);
@@ -64,7 +63,7 @@
     .btn.primary { background: var(--color-primary); color:#fff; }
     .btn.primary:hover { background: var(--color-primary-hover); }
     .btn.secondary { background: var(--color-surface-2); color: var(--color-text); border-color: var(--color-border); }
-    .btn.danger { background: var(--color-danger-soft); color:#7c2230; border-color:#e5bcc5; }
+    .btn.danger { background: var(--color-danger-soft); color: var(--color-danger-text); border-color:#e5bcc5; }
     .btn.ghost { background: transparent; border-color: var(--color-border); color: var(--color-text-muted); }
     .btn:disabled { opacity:.45; cursor:not-allowed; }
     .round-list, .shot-list { display:grid; gap: var(--space-3); }
@@ -80,12 +79,22 @@
     .hole-title { margin:0; font-size: var(--text-xl); font-family: var(--font-display); text-align:center; }
     .hole-nav-dots { display:flex; gap: var(--space-2); overflow-x:auto; padding-bottom: var(--space-1); justify-content:center; scrollbar-width:none; }
     .hole-nav-dots::-webkit-scrollbar { display:none; }
-    .hole-dot {
-      min-width:42px; min-height:42px; border-radius:999px; border:1px solid var(--color-border); background:white;
-      color: var(--color-text-muted); font-size: var(--text-sm); font-weight:700;
-    }
+    .hole-dot { min-width:42px; min-height:42px; border-radius:999px; border:1px solid var(--color-border); background:white; color: var(--color-text-muted); font-size: var(--text-sm); font-weight:700; }
     .hole-dot.active { background: var(--color-primary); border-color: var(--color-primary); color:white; }
     .hole-pager { display:flex; justify-content:center; gap: var(--space-3); flex-wrap:wrap; }
+    .option-group { display:grid; gap: var(--space-2); }
+    .option-grid { display:grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: var(--space-2); }
+    .option-grid.three { grid-template-columns: repeat(3, minmax(0,1fr)); }
+    .option-btn {
+      min-height:48px; border-radius: var(--radius-md); border:1px solid var(--color-border); background:white; color: var(--color-text);
+      font-size: var(--text-sm); font-weight:700; padding: .75rem .5rem;
+    }
+    .option-btn.active { background: var(--color-primary-soft); color: var(--color-primary-hover); border-color: var(--color-primary); }
+    .helper-text { color: var(--color-text-muted); font-size: var(--text-xs); line-height: 1.5; }
+    .selection-pill {
+      min-height:48px; border-radius: var(--radius-md); border:1px dashed var(--color-border); background: rgba(255,255,255,.72);
+      display:flex; align-items:center; padding: 0 var(--space-4); color: var(--color-text-muted); font-size: var(--text-sm); font-weight:600;
+    }
     .shot-item { border-radius: var(--radius-lg); padding: var(--space-4); display:grid; gap: var(--space-3); }
     .shot-item-top { display:flex; justify-content:space-between; gap: var(--space-3); align-items:flex-start; }
     .shot-item strong { font-size: var(--text-base); }
@@ -99,6 +108,8 @@
       .section-head, .hole-topbar { flex-direction:column; align-items:stretch; }
       .btn-row, .shot-actions, .hole-pager { display:grid; grid-template-columns:1fr 1fr; }
       .btn-row .btn:first-child, .hole-pager .btn:first-child { grid-column:1 / -1; }
+      .option-grid { grid-template-columns: repeat(3, minmax(0,1fr)); }
+      .option-grid.three { grid-template-columns: repeat(2, minmax(0,1fr)); }
       .hole-dot { min-width:38px; min-height:38px; }
     }
   </style>
@@ -146,11 +157,11 @@
           </div>
           <div class="field full">
             <label for="roundMemo">라운드 메모</label>
-            <textarea id="roundMemo" placeholder="예: 바람 강함, 그린 빠름"></textarea>
+            <input id="roundMemo" type="text" placeholder="예: 바람 강함, 그린 빠름" />
           </div>
         </div>
         <div class="btn-row">
-          <button class="btn primary" id="createRoundBtn" type="button">라운드 만들고 홀 화면으로</button>
+          <button class="btn primary" id="createRoundBtn" type="button">홀 화면으로</button>
         </div>
         <div class="inline-message" id="roundMessage"></div>
       </div>
@@ -189,11 +200,7 @@
       </div>
 
       <div class="card">
-        <div class="section-head">
-          <div>
-            <h3>현재 홀 입력</h3>
-          </div>
-        </div>
+        <div class="section-head"><div><h3>현재 홀 입력</h3></div></div>
         <div class="field-grid" style="margin-top: var(--space-4);">
           <div class="field">
             <label for="holePar">파</label>
@@ -207,28 +214,31 @@
             <label for="shotNumber">샷 번호</label>
             <input id="shotNumber" type="number" min="1" inputmode="numeric" placeholder="예: 1" />
           </div>
-          <div class="field">
-            <label for="shotClub">클럽</label>
-            <input id="shotClub" type="text" placeholder="예: D, 7i, PW" />
+          <div class="field full option-group">
+            <label>클럽</label>
+            <div id="clubOptions" class="option-grid three"></div>
+            <div class="selection-pill" id="clubSelection">선택 안함</div>
           </div>
           <div class="field">
             <label for="shotDist">남은 거리(m)</label>
             <input id="shotDist" type="number" min="0" inputmode="numeric" placeholder="예: 145" />
           </div>
-          <div class="field">
-            <label for="shotMiss">미스샷</label>
-            <select id="shotMiss">
-              <option value="">선택 안함</option>
-              <option value="MISS">MISS</option>
-            </select>
+          <div class="field full option-group">
+            <label>미스샷</label>
+            <div id="missOptions" class="option-grid"></div>
+            <div class="selection-pill" id="missSelection">선택 안함</div>
           </div>
-          <div class="field">
-            <label for="shotLocation">위치</label>
-            <input id="shotLocation" type="text" placeholder="예: FW, Rg, G" />
+          <div class="field full option-group">
+            <label>위치</label>
+            <div id="locationOptions" class="option-grid"></div>
+            <div class="selection-pill" id="locationSelection">선택 안함</div>
+            <div class="helper-text">FW(페어웨이), Rg(러프), B(벙커), G(그린), L(왼쪽), R(오른쪽), Sh(짧음), Lg(김)</div>
           </div>
-          <div class="field full">
-            <label for="shotNote">노트</label>
-            <textarea id="shotNote" placeholder="예: 약간 푸시, 짧음"></textarea>
+          <div class="field full option-group">
+            <label>노트</label>
+            <div id="noteOptions" class="option-grid"></div>
+            <div class="selection-pill" id="noteSelection">선택 안함</div>
+            <div class="helper-text">T(탑핑), F(팻), H(훅), S(슬라이스), U(업), D(다운)</div>
           </div>
         </div>
         <div class="btn-row">
@@ -239,11 +249,7 @@
       </div>
 
       <div class="card">
-        <div class="section-head">
-          <div>
-            <h3>이 홀의 샷 기록</h3>
-          </div>
-        </div>
+        <div class="section-head"><div><h3>이 홀의 샷 기록</h3></div></div>
         <div id="shotList" class="shot-list" style="margin-top: var(--space-4);"></div>
       </div>
     </section>
@@ -252,7 +258,20 @@
   </main>
 
   <script>
-    const state = { rounds: [], selectedRoundId: null, currentHoleIndex: 0, editingShotId: null, currentScreen: 'rounds' };
+    const CLUB_OPTIONS = ['D', '3W', '5W', '4H', '5H', '5i', '6i', '7i', '8i', '9i', 'PW', 'AW', 'SW', 'PT'];
+    const MISS_OPTIONS = ['MISS', 'T', 'F', 'H', 'S', 'U', 'D'];
+    const LOCATION_OPTIONS = ['FW', 'Rg', 'B', 'G', 'L', 'R', 'Sh', 'Lg'];
+    const NOTE_OPTIONS = ['T', 'F', 'H', 'S', 'U', 'D'];
+
+    const state = {
+      rounds: [],
+      selectedRoundId: null,
+      currentHoleIndex: 0,
+      editingShotId: null,
+      currentScreen: 'rounds',
+      draft: { club: '', miss: '', location: '', note: '' }
+    };
+
     const $ = (id) => document.getElementById(id);
     const uid = () => Math.random().toString(36).slice(2, 10);
 
@@ -303,6 +322,7 @@
       if (shot.club) bits.push(shot.club);
       if (shot.location) bits.push(shot.location);
       if (shot.miss) bits.push(shot.miss);
+      if (shot.note) bits.push(`N:${shot.note}`);
       return bits.length ? bits.join(' · ') : '요약 없음';
     }
 
@@ -310,6 +330,35 @@
       if (!hole || !hole.shots.length) return 1;
       const nums = hole.shots.map((shot) => Number(shot.number)).filter((n) => !Number.isNaN(n));
       return nums.length ? Math.max(...nums) + 1 : 1;
+    }
+
+    function setDraft(key, value) {
+      state.draft[key] = state.draft[key] === value ? '' : value;
+      renderSelections();
+    }
+
+    function renderOptionButtons(containerId, options, key) {
+      const container = $(containerId);
+      container.innerHTML = '';
+      options.forEach((option) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `option-btn${state.draft[key] === option ? ' active' : ''}`;
+        button.textContent = option;
+        button.addEventListener('click', () => setDraft(key, option));
+        container.appendChild(button);
+      });
+    }
+
+    function renderSelections() {
+      renderOptionButtons('clubOptions', CLUB_OPTIONS, 'club');
+      renderOptionButtons('missOptions', MISS_OPTIONS, 'miss');
+      renderOptionButtons('locationOptions', LOCATION_OPTIONS, 'location');
+      renderOptionButtons('noteOptions', NOTE_OPTIONS, 'note');
+      $('clubSelection').textContent = state.draft.club || '선택 안함';
+      $('missSelection').textContent = state.draft.miss || '선택 안함';
+      $('locationSelection').textContent = state.draft.location || '선택 안함';
+      $('noteSelection').textContent = state.draft.note || '선택 안함';
     }
 
     function syncShotNumber() {
@@ -320,15 +369,13 @@
 
     function clearShotForm() {
       state.editingShotId = null;
+      state.draft = { club: '', miss: '', location: '', note: '' };
       $('saveShotBtn').textContent = '샷 추가';
       $('cancelEditBtn').classList.add('hidden');
-      $('shotClub').value = '';
       $('shotDist').value = '';
-      $('shotMiss').value = '';
-      $('shotLocation').value = '';
-      $('shotNote').value = '';
       clearMessage('shotMessage');
       syncShotNumber();
+      renderSelections();
     }
 
     function openRound(roundId, holeIndex = 0) {
@@ -360,7 +407,6 @@
         container.innerHTML = '<div class="empty">아직 라운드가 없어요. 위에서 첫 라운드를 만들어보세요.</div>';
         return;
       }
-
       container.innerHTML = '';
       state.rounds.forEach((round) => {
         const card = document.createElement('article');
@@ -380,7 +426,6 @@
             <button class="btn primary" type="button" data-action="open">홀 화면 열기</button>
             <button class="btn danger" type="button" data-action="remove">라운드 삭제</button>
           </div>`;
-
         card.querySelector('[data-action="open"]').addEventListener('click', () => openRound(round.id, 0));
         card.querySelector('[data-action="remove"]').addEventListener('click', () => {
           if (!confirm('이 라운드를 삭제할까요?')) return;
@@ -392,7 +437,6 @@
           renderRoundList();
           showScreen('rounds');
         });
-
         container.appendChild(card);
       });
     }
@@ -421,7 +465,6 @@
         list.innerHTML = '<div class="empty">아직 이 홀에 기록된 샷이 없어요.</div>';
         return;
       }
-
       list.innerHTML = '';
       [...hole.shots].sort((a, b) => Number(a.number) - Number(b.number)).forEach((shot) => {
         const item = document.createElement('article');
@@ -430,28 +473,27 @@
           <div class="shot-item-top">
             <div>
               <strong>${shot.number}번 샷 · ${summarizeShot(shot)}</strong>
-              <p>${shot.dist ? `${shot.dist}m` : '거리 미입력'}${shot.note ? ` · ${shot.note}` : ''}</p>
+              <p>${shot.dist ? `${shot.dist}m` : '거리 미입력'}</p>
             </div>
             <div class="shot-actions">
               <button class="btn secondary" type="button" data-action="edit">수정</button>
               <button class="btn danger" type="button" data-action="delete">삭제</button>
             </div>
           </div>`;
-
         item.querySelector('[data-action="edit"]').addEventListener('click', () => {
           state.editingShotId = shot.id;
+          state.draft.club = shot.club || '';
+          state.draft.miss = shot.miss || '';
+          state.draft.location = shot.location || '';
+          state.draft.note = shot.note || '';
           $('saveShotBtn').textContent = '샷 수정 저장';
           $('cancelEditBtn').classList.remove('hidden');
           $('shotNumber').value = shot.number || '';
-          $('shotClub').value = shot.club || '';
           $('shotDist').value = shot.dist || '';
-          $('shotMiss').value = shot.miss || '';
-          $('shotLocation').value = shot.location || '';
-          $('shotNote').value = shot.note || '';
           clearMessage('shotMessage');
+          renderSelections();
           window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-
         item.querySelector('[data-action="delete"]').addEventListener('click', () => {
           if (!confirm('이 샷을 삭제할까요?')) return;
           hole.shots = hole.shots.filter((entry) => entry.id !== shot.id);
@@ -459,7 +501,6 @@
           renderHoleScreen();
           showMessage('shotMessage', '샷을 삭제했어요.');
         });
-
         list.appendChild(item);
       });
     }
@@ -471,10 +512,10 @@
         showScreen('rounds');
         return;
       }
-
       $('holePar').value = hole.par || '4';
       renderHoleDots(round);
       renderShotList(hole);
+      renderSelections();
       $('prevHoleBtn').disabled = state.currentHoleIndex === 0;
       $('nextHoleBtn').disabled = state.currentHoleIndex === round.holes.length - 1;
       syncShotNumber();
@@ -483,25 +524,20 @@
     function saveShot() {
       const hole = getCurrentHole();
       if (!hole) return showMessage('shotMessage', '먼저 라운드를 열어 주세요.', 'error');
-
-      const club = $('shotClub').value.trim();
-      const location = $('shotLocation').value.trim();
+      const club = state.draft.club;
+      const miss = state.draft.miss;
+      const location = state.draft.location;
+      const note = state.draft.note;
       const dist = $('shotDist').value.trim();
-      const note = $('shotNote').value.trim();
-      const miss = $('shotMiss').value;
       let number = Number($('shotNumber').value);
-
       if (!number) number = state.editingShotId ? Number($('shotNumber').value || 1) : getNextShotNumber(hole);
-      if (!club) return showMessage('shotMessage', '클럽을 먼저 입력해 주세요.', 'error');
-
+      if (!club) return showMessage('shotMessage', '클럽을 선택해 주세요.', 'error');
       if (!state.editingShotId && club && location) {
         const ok = confirm('샷을 추가하시겠습니까?');
         if (!ok) return;
       }
-
       hole.par = $('holePar').value;
       const payload = { number, club, dist, miss, location, note };
-
       if (state.editingShotId) {
         const target = hole.shots.find((shot) => shot.id === state.editingShotId);
         if (target) Object.assign(target, payload);
@@ -510,7 +546,6 @@
         hole.shots.push({ id: uid(), ...payload });
         showMessage('shotMessage', '샷을 추가했어요.');
       }
-
       hole.shots.sort((a, b) => Number(a.number) - Number(b.number));
       renderRoundList();
       renderHoleScreen();
@@ -521,14 +556,12 @@
     $('backToRoundsBtn').addEventListener('click', () => showScreen('rounds'));
     $('saveShotBtn').addEventListener('click', saveShot);
     $('cancelEditBtn').addEventListener('click', clearShotForm);
-
     $('prevHoleBtn').addEventListener('click', () => {
       if (state.currentHoleIndex === 0) return;
       state.currentHoleIndex -= 1;
       clearShotForm();
       renderHoleScreen();
     });
-
     $('nextHoleBtn').addEventListener('click', () => {
       const round = getSelectedRound();
       if (!round || state.currentHoleIndex >= round.holes.length - 1) return;
@@ -536,14 +569,12 @@
       clearShotForm();
       renderHoleScreen();
     });
-
     $('holePar').addEventListener('change', () => {
       const hole = getCurrentHole();
       if (!hole) return;
       hole.par = $('holePar').value;
       renderRoundList();
     });
-
     $('downloadBtn').addEventListener('click', () => {
       const payload = JSON.stringify(state.rounds, null, 2);
       const blob = new Blob([payload], { type: 'application/json' });
@@ -553,7 +584,6 @@
       link.click();
       URL.revokeObjectURL(link.href);
     });
-
     $('importInput').addEventListener('change', async (event) => {
       const file = event.target.files?.[0];
       if (!file) return;
@@ -585,7 +615,6 @@
         event.target.value = '';
       }
     });
-
     $('resetBtn').addEventListener('click', () => {
       if (!confirm('정말 모든 라운드 기록을 지울까요?')) return;
       state.rounds = [];
@@ -598,6 +627,7 @@
     });
 
     $('roundDate').value = todayLocal();
+    renderSelections();
     renderRoundList();
     showScreen('rounds');
   </script>
